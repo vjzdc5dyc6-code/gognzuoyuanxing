@@ -1,0 +1,54 @@
+name: Weekly Codex read-only review
+
+on:
+  schedule:
+    # GitHub Actions cron uses UTC. This runs every Saturday at 09:00 UTC.
+    - cron: '0 9 * * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Codex CLI
+        run: npm install --global @openai/codex
+
+      - name: Check API key
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "Missing repository secret OPENAI_API_KEY. Add it under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Authenticate Codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: printf '%s' "$OPENAI_API_KEY" | codex login --with-api-key
+
+      - name: Run read-only review
+        run: |
+          codex exec \
+            --sandbox read-only \
+            --ephemeral \
+            --cd "$GITHUB_WORKSPACE" \
+            --output-last-message weekly-codex-review.md \
+            < .github/codex/weekly-observer-prompt.md
+
+      - name: Upload review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-codex-review-${{ github.run_number }}
+          path: weekly-codex-review.md
+          if-no-files-found: error
+          retention-days: 90
