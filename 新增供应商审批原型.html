@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>新增供应商申请｜企业微信审批原型</title>
+  <style>
+    :root {
+      --wx-blue: #287cf0;
+      --wx-blue-dark: #1366d8;
+      --wx-blue-soft: #e9f3ff;
+      --ink: #1f2d3d;
+      --muted: #718096;
+      --line: #e5e9ef;
+      --canvas: #f6f8fb;
+      --white: #ffffff;
+      --danger: #f04444;
+      --shadow: 0 16px 40px rgba(31, 53, 79, .09);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--canvas);
+      font-size: 15px;
+      letter-spacing: .01em;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      padding: 0 26px 0 34px;
+      border-bottom: 1px solid #dfe5ed;
+      background: #f8fafc;
+      gap: 28px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .brand { width: 210px; display: flex; align-items: center; gap: 13px; color: #162b44; font-size: 17px; font-weight: 700; }
+    .brand-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--wx-blue); position: relative; box-shadow: 0 5px 12px rgba(40,124,240,.28); }
+    .brand-mark::after { content: ""; position: absolute; inset: 7px; border: 2px solid #fff; border-radius: 5px; opacity: .9; }
+    .crumb { color: #7c8a9b; font-size: 14px; display: flex; align-items: center; gap: 11px; }
+    .crumb b { color: #26364a; font-weight: 600; }
+    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 24px; color: #6c7c8f; }
+    .top-actions .mini { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .mini-dot { width: 8px; height: 8px; border-radius: 50%; background: #23b26d; box-shadow: 0 0 0 4px rgba(35,178,109,.12); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; color: #fff; background: linear-gradient(135deg,#89b4f8,#3a75d5); display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .body { flex: 1; display: flex; min-height: calc(100vh - 70px); }
+    .rail { width: 92px; border-right: 1px solid #e2e8f0; background: #f9fbfd; padding: 18px 10px; display:flex; flex-direction: column; align-items:center; gap: 10px; }
+    .rail-item { width: 70px; min-height: 60px; border-radius: 12px; color: #7c8da1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 7px; font-size: 12px; border: 1px solid transparent; }
+    .rail-item .rail-icon { width: 24px; height: 24px; border-radius: 7px; background: #dbe7f4; color: #6985a6; display:flex; align-items:center; justify-content:center; font-size: 13px; font-weight: 700; }
+    .rail-item.active { background: #eaf3ff; color: var(--wx-blue); border-color: #d7e9ff; }
+    .rail-item.active .rail-icon { background: var(--wx-blue); color: #fff; }
+    .rail-spacer { flex: 1; }
+    .workspace { flex: 1; padding: 26px 34px 42px; overflow: auto; }
+    .page-head { max-width: 1120px; margin: 0 auto 18px; display:flex; align-items:flex-start; justify-content:space-between; gap: 20px; }
+    .title-wrap { display:flex; align-items:flex-start; gap: 15px; }
+    .back { border: 0; background: transparent; color: #61748c; font-size: 28px; line-height: 1; padding: 2px 4px; }
+    .page-title { margin: 0; font-size: 23px; line-height: 1.25; color: #192b41; font-weight: 700; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .head-actions { display:flex; align-items:center; gap: 10px; }
+    .status-pill { display:inline-flex; align-items:center; gap: 8px; padding: 7px 11px; border-radius: 99px; background: #eef8f2; color: #187c4d; font-size: 13px; white-space: nowrap; }
+    .status-pill i { width: 7px; height: 7px; border-radius: 50%; background: #29b673; }
+    .ghost-btn { height: 36px; padding: 0 13px; border: 1px solid #d7e1ed; border-radius: 7px; background: #fff; color: #53657a; }
+    .form-card { max-width: 1120px; margin: 0 auto; background: var(--white); border: 1px solid #e1e7ef; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .form-section { padding: 28px 42px 6px; }
+    .section-title { display:flex; align-items:center; gap: 10px; color: #26384d; font-size: 16px; font-weight: 700; margin: 0 0 22px; }
+    .section-title::before { content: ""; width: 4px; height: 18px; background: var(--wx-blue); border-radius: 4px; }
+    .section-desc { margin: -14px 0 20px 14px; color: #95a2b1; font-size: 13px; }
+    .field-grid { display:grid; grid-template-columns: 1fr 1fr; column-gap: 42px; row-gap: 20px; }
+    .field { display:grid; grid-template-columns: 112px minmax(0,1fr); align-items:center; gap: 16px; min-height: 42px; }
+    .field.full { grid-column: 1 / -1; }
+    .field-label { color: #425368; line-height: 1.45; }
+    .required::before { content: "*"; color: var(--danger); margin-right: 4px; }
+    .control, .select-control, .multi-control, .file-control, .textarea {
+      min-width: 0; width: 100%; border: 1px solid #d6dee8; border-radius: 7px; background: #fff; color: #283b52; transition: .16s ease; }
+    .control, .select-control, .multi-control { height: 42px; padding: 0 13px; }
+    .control::placeholder, .textarea::placeholder { color: #aeb9c6; }
+    .control:focus, .select-control:focus, .multi-control:focus, .textarea:focus { outline: none; border-color: #70aaf9; box-shadow: 0 0 0 3px rgba(40,124,240,.1); }
+    .select-wrap { position:relative; }
+    .select-control { appearance: none; padding-right: 36px; }
+    .select-wrap::after { content:"⌄"; position:absolute; right: 13px; top: 8px; color: #7e8b9b; font-size: 19px; pointer-events:none; }
+    .multi-control { min-height: 42px; height:auto; padding: 6px 36px 6px 9px; display:flex; flex-wrap:wrap; gap: 6px; position:relative; }
+    .multi-control::after { content:"⌄"; position:absolute; right: 13px; top: 8px; color: #7e8b9b; font-size: 19px; }
+    .tag { display:inline-flex; align-items:center; gap: 4px; height: 28px; padding: 0 8px; border-radius: 5px; background: #edf5ff; color:#296cc1; font-size:13px; }
+    .tag button { border: 0; background: transparent; color:#7ca4d9; padding:0 0 0 3px; font-size: 16px; line-height: 1; }
+    .placeholder { color:#aeb9c6; line-height: 28px; }
+    .checkbox-grid { display:grid; grid-template-columns: repeat(5, minmax(110px,1fr)); gap: 12px 18px; }
+    .check { display:flex; align-items:center; gap: 8px; min-height: 26px; color: #56687b; font-size: 14px; cursor:pointer; user-select:none; }
+    .check input { position:absolute; opacity:0; pointer-events:none; }
+    .checkmark { width: 17px; height:17px; border: 1px solid #bdc9d7; border-radius: 4px; background: #fff; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size: 12px; transition:.16s; }
+    .check input:checked + .checkmark { background: var(--wx-blue); border-color: var(--wx-blue); }
+    .check input:checked + .checkmark::after { content:"✓"; }
+    .check:hover .checkmark { border-color: #76aaf1; }
+    .business-grid { display:grid; grid-template-columns: repeat(6, minmax(105px,1fr)); gap: 14px 22px; }
+    .upload-box { display:flex; align-items:center; gap: 11px; flex-wrap:wrap; }
+    .upload-btn { position:relative; display:inline-flex; align-items:center; justify-content:center; height: 38px; padding: 0 17px; background: var(--wx-blue); border: 1px solid var(--wx-blue); border-radius: 6px; color:#fff; font-weight: 600; overflow:hidden; }
+    .upload-btn:hover, .primary:hover { background: var(--wx-blue-dark); }
+    .upload-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .upload-hint { color:#8b99a9; font-size:13px; }
+    .file-name { display:none; align-items:center; gap: 8px; max-width: 280px; padding: 7px 10px; border-radius: 6px; background: #f4f8fc; color:#52667e; font-size:13px; }
+    .file-name.show { display:inline-flex; }
+    .file-name button { border: 0; background: transparent; color:#91a0b0; padding:0; font-size: 16px; }
+    .textarea { resize: vertical; min-height: 110px; padding: 11px 13px; line-height: 1.6; }
+    .field.full .counter { text-align:right; color:#a0acb9; font-size:12px; margin-top: 5px; }
+    .form-divider { height: 1px; background:#edf0f4; margin: 24px 42px 0; }
+    .approval { padding: 27px 42px 120px; }
+    .approval-head { display:flex; align-items:center; justify-content:space-between; gap: 15px; }
+    .approval-note { color:#8b99a8; font-size:13px; }
+    .approval-route { margin-top: 20px; display:flex; align-items:center; gap: 0; }
+    .node { display:flex; align-items:center; gap: 10px; color:#344b63; font-weight:600; }
+    .node-avatar { width: 34px; height: 34px; border-radius:50%; background:#e1ecfb; color:#3874c7; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .node-badge { margin-left: 2px; padding: 2px 6px; border-radius: 4px; font-size: 11px; color:#2d7ee7; background:#eaf3ff; font-weight:500; }
+    .route-line { width: 78px; height:1px; background:#cad7e5; margin: 0 15px; position:relative; }
+    .route-line::after { content:""; position:absolute; right:-1px; top:-3px; width:6px; height:6px; border-right:1px solid #a8bad0; border-top:1px solid #a8bad0; transform:rotate(45deg); }
+    .sticky-actions { position:sticky; bottom:0; z-index:10; height:76px; border-top:1px solid #e7ebf1; background:rgba(255,255,255,.96); display:flex; align-items:center; justify-content:center; gap: 16px; backdrop-filter: blur(8px); }
+    .primary, .secondary { min-width: 130px; height: 44px; border-radius: 7px; font-size: 16px; font-weight: 600; }
+    .primary { color:#fff; background: var(--wx-blue); border:1px solid var(--wx-blue); box-shadow:0 6px 14px rgba(40,124,240,.2); }
+    .secondary { color:#41556d; background:#fff; border:1px solid #d7e0eb; }
+    .secondary:hover { background:#f7f9fb; }
+    .toast { position: fixed; left: 50%; top: 22px; transform: translate(-50%, -18px); opacity:0; pointer-events:none; z-index:100; background:#1f2e41; color:#fff; padding: 11px 18px; border-radius:7px; box-shadow:0 10px 24px rgba(0,0,0,.2); transition:.22s ease; font-size:14px; }
+    .toast.show { opacity:1; transform:translate(-50%,0); }
+    @media (max-width: 1050px) {
+      .field-grid { grid-template-columns:1fr; }
+      .checkbox-grid { grid-template-columns: repeat(4, minmax(115px,1fr)); }
+      .business-grid { grid-template-columns: repeat(3, minmax(125px,1fr)); }
+      .page-head { align-items:flex-start; }
+    }
+    @media (max-width: 720px) {
+      .topbar { padding:0 14px; gap:12px; }
+      .brand { width:auto; font-size:15px; }
+      .crumb, .top-actions .mini { display:none; }
+      .rail { display:none; }
+      .workspace { padding:18px 10px 28px; }
+      .form-section, .approval { padding-left:18px; padding-right:18px; }
+      .form-divider { margin-left:18px; margin-right:18px; }
+      .field { grid-template-columns:1fr; gap:7px; }
+      .checkbox-grid { grid-template-columns: repeat(2, minmax(120px,1fr)); }
+      .business-grid { grid-template-columns: repeat(2, minmax(120px,1fr)); }
+      .approval-route { flex-wrap:wrap; row-gap:12px; }
+      .route-line { width:28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>企业微信 · 审批中心</span></div>
+      <div class="crumb"><span>工作台</span><span>/</span><b>新增供应商申请</b></div>
+      <div class="top-actions">
+        <span class="mini"><span class="mini-dot"></span>模板已同步</span>
+        <span class="mini">杭州市场部</span>
+        <span class="avatar">王</span>
+      </div>
+    </header>
+    <div class="body">
+      <aside class="rail" aria-label="应用导航">
+        <div class="rail-item"><span class="rail-icon">⌂</span><span>工作台</span></div>
+        <div class="rail-item"><span class="rail-icon">◌</span><span>消息</span></div>
+        <div class="rail-item"><span class="rail-icon">▣</span><span>文档</span></div>
+        <div class="rail-item active"><span class="rail-icon">✓</span><span>审批</span></div>
+        <div class="rail-item"><span class="rail-icon">▦</span><span>日程</span></div>
+        <div class="rail-item"><span class="rail-icon">▰</span><span>会议</span></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-item"><span class="rail-icon">···</span><span>更多</span></div>
+      </aside>
+      <main class="workspace">
+        <div class="page-head">
+          <div class="title-wrap">
+            <button class="back" aria-label="返回">‹</button>
+            <div>
+              <h1 class="page-title">新增供应商申请（沃行）</h1>
+              <p class="subtitle">审批单据模板 · 新增供应商信息将同步至供应商主数据</p>
+            </div>
+          </div>
+          <div class="head-actions">
+            <span class="status-pill"><i></i>企业微信模板</span>
+          </div>
+        </div>
+        <form class="form-card" id="supplierForm" novalidate>
+          <section class="form-section">
+            <h2 class="section-title">供应商基础信息</h2>
+            <p class="section-desc">带 <span style="color:var(--danger)">*</span> 的字段为必填项，审批通过后将同步到供应商档案。</p>
+            <div class="field-grid">
+              <label class="field"><span class="field-label required">新增供应商名称</span><input class="control required-input" name="supplierName" placeholder="请填写供应商名称" /></label>
+              <label class="field"><span class="field-label required">国内 / 境外</span><span class="select-wrap"><select class="select-control required-input" name="region"><option value="">请选择</option><option>国内</option><option>境外</option></select></span></label>
+              <label class="field"><span class="field-label required">中文名称</span><input class="control required-input" name="cnName" placeholder="请填写中文名称" /></label>
+              <label class="field"><span class="field-label required">简称</span><input class="control required-input" name="shortName" placeholder="请填写简称" /></label>
+              <label class="field"><span class="field-label required">英文名称</span><input class="control required-input" name="enName" placeholder="请填写英文名称" /></label>
+              <label class="field"><span class="field-label required">是否同行</span><span class="select-wrap"><select class="select-control required-input" name="peer"><option selected>否</option><option>是</option></select></span></label>
+              <label class="field"><span class="field-label required">有无合同</span><span class="select-wrap"><select class="select-control required-input" name="contract"><option selected>是</option><option>否</option></select></span></label>
+              <label class="field"><span class="field-label required">地址</span><input class="control required-input" name="address" placeholder="请填写注册地址或办公地址" /></label>
+            </div>
+          </section>
+          <section class="form-section">
+            <h2 class="section-title">供应商角色</h2>
+            <div class="checkbox-grid" data-group="role">
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>订舱代理/换单代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>船代</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>目的港代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>指定货代</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>本地代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>结算代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>船公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>航空公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>清关行</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>仓库</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>卡车公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>发货人</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>收货人</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>通知人</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>口岸代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>发运代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>装货地公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>签单地公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>码头公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>卸货港公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>目的港公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>贸易商</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>工厂/生产商</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>其他</label>
+            </div>
+          </section>
+          <section class="form-section">
+            <h2 class="section-title">相关业务类型</h2>
+            <div class="business-grid" data-group="business">
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>海运出口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>海运进口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>空运出口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>空运进口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>铁路业务</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>综合物流</label>
+            </div>
+          </section>
+          <section class="form-section">
+            <h2 class="section-title">审批材料</h2>
+            <div class="field-grid">
+              <div class="field full"><span class="field-label required">供应商档案</span><div class="upload-box"><label class="upload-btn">上传档案<input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" /></label><span class="upload-hint">支持 PDF、Word、Excel、图片，单个文件不超过 20MB</span><span class="file-name" id="fileName"><span>📎</span><span id="fileText"></span><button type="button" id="removeFile" aria-label="移除附件">×</button></span></div></div>
+              <label class="field full"><span class="field-label required">审批内容简述</span><span><textarea class="textarea required-input" id="summary" maxlength="500" name="summary" placeholder="请简要说明新增供应商的原因、合作范围及业务背景"></textarea><div class="counter"><span id="count">0</span>/500</div></span></label>
+            </div>
+          </section>
+          <div class="form-divider"></div>
+          <section class="approval">
+            <div class="approval-head"><div><h2 class="section-title" style="margin-bottom:0">审批流程</h2><div class="approval-note">已由管理员预设，不可修改审批人和抄送人</div></div></div>
+            <div class="approval-route">
+              <div class="node"><span class="node-avatar">发</span><span>发起人</span></div><span class="route-line"></span>
+              <div class="node"><span class="node-avatar">审</span><span>供应链负责人</span><span class="node-badge">或签</span></div><span class="route-line"></span>
+              <div class="node"><span class="node-avatar">财</span><span>财务负责人</span></div>
+            </div>
+          </section>
+          <div class="sticky-actions"><button class="primary" type="submit">提交审批</button><button class="secondary" type="button" id="cancelBtn">取消</button></div>
+        </form>
+      </main>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    const form = document.getElementById('supplierForm');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const fileText = document.getElementById('fileText');
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files.length) return;
+      fileText.textContent = fileInput.files[0].name;
+      fileName.classList.add('show');
+    });
+    document.getElementById('removeFile').addEventListener('click', () => { fileInput.value = ''; fileName.classList.remove('show'); });
+    const summary = document.getElementById('summary');
+    summary.addEventListener('input', () => { document.getElementById('count').textContent = summary.value.length; });
+    function clearErrors() { document.querySelectorAll('.required-input').forEach(el => el.style.borderColor = ''); }
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      clearErrors();
+      let firstInvalid = null;
+      document.querySelectorAll('.required-input').forEach(el => {
+        if (!String(el.value || '').trim()) { el.style.borderColor = 'var(--danger)'; if (!firstInvalid) firstInvalid = el; }
+      });
+      if (firstInvalid) {
+        firstInvalid.focus();
+        showToast('请先补充标记为必填的字段');
+        return;
+      }
+      showToast('已生成审批单，正在提交至企业微信');
+    });
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      if (confirm('确定要取消本次填写吗？')) {
+        form.reset();
+        document.getElementById('count').textContent = '0';
+        fileName.classList.remove('show');
+        clearErrors();
+        showToast('已取消本次填写');
+      }
+    });
+  </script>
+</body>
+</html>

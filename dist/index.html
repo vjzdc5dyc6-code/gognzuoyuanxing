@@ -1,74 +1,309 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>销售查询 - 费用解锁申请原型</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>新增供应商申请｜企业微信审批原型</title>
   <style>
-    :root{--blue:#0879c5;--blue-dark:#066caf;--page:#eef4f8;--line:#d7e1e8;--text:#253746;--green:#45bd8b;--danger:#eb4b57;--shadow:0 15px 46px rgba(12,53,77,.27)}
-    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0}body{overflow:hidden;color:var(--text);background:#e8eef3;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer}
-    .app{display:flex;width:100%;height:100%;min-width:1160px}.sidebar{width:59px;flex:0 0 59px;display:flex;flex-direction:column;align-items:center;background:#0877c7;color:#fff;box-shadow:2px 0 8px rgba(10,59,89,.12);z-index:2}.brand{width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#fff;color:#26333a;font-size:36px;font-weight:700;letter-spacing:-7px;padding-right:7px;border-bottom:1px solid #e0e7ec}.side-item{position:relative;width:100%;height:58px;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:#fff;font-size:25px;opacity:.98}.side-item:hover,.side-item.active{background:#066caf}.side-item.active:after{content:"";position:absolute;top:0;right:0;bottom:0;width:4px;background:#fff}.side-spacer{flex:1}
-    .main{min-width:0;flex:1;display:flex;flex-direction:column}.topbar{height:59px;display:flex;align-items:center;justify-content:flex-end;padding:0 18px 0 24px;background:#fff;border-bottom:1px solid #e2e9ee;white-space:nowrap}.top-info{display:flex;align-items:center;gap:24px;color:#1d1d1d;font-size:16px}.top-info b{color:#777;font-weight:400}.top-info label{display:inline-flex;align-items:center;gap:8px}.top-info select{min-width:126px;height:42px;padding:0 28px 0 12px;color:#3d3d3d;background:#fff;border:1px solid #d4dce3;border-radius:4px}.top-icon{color:#27323a;font-size:27px;line-height:1}.top-icon.square{font-size:28px;letter-spacing:-4px}
-    .tabs{height:52px;display:flex;align-items:stretch;padding-left:18px;background:#f2f4f6;border-bottom:1px solid #dfe6eb}.tab{min-width:84px;display:flex;align-items:center;justify-content:center;padding:0 14px;color:#394c5c;border-right:1px solid #e5ebef;font-size:17px}.tab.active{color:#0879c5;background:#d8f4fc}.tab .close{margin-left:9px;color:#3bafd0;font-size:18px}
-    .toolbar{height:66px;display:flex;align-items:center;gap:8px;padding:0 9px;background:#d8f4fc;border-bottom:1px solid #c9e8f0;overflow:hidden}.toolbar-btn{height:42px;padding:0 19px;display:inline-flex;align-items:center;justify-content:center;gap:11px;border:0;border-radius:4px;color:#fff;background:var(--blue);font-weight:600;font-size:17px;white-space:nowrap}.toolbar-btn:hover{background:var(--blue-dark)}.toolbar-btn.green{background:#40b987}.toolbar-btn.collapse{width:38px;padding:0;font-size:28px}.toolbar-btn.has-arrow:after{content:"⌄";font-size:22px;margin-top:-4px}
-    .content{min-height:0;flex:1;display:flex;flex-direction:column;background:var(--page)}.query-panel{height:168px;margin:8px 8px 14px;padding:15px 9px;background:#f1f4f7;border-radius:3px;box-shadow:inset 0 0 0 1px #edf1f4}.query-grid{display:grid;grid-template-columns:1.02fr 1.02fr 1.02fr 1.02fr;column-gap:20px;row-gap:13px}.filter{min-width:0;display:grid;grid-template-columns:108px 116px minmax(0,1fr);align-items:center;gap:0}.filter label{padding-right:8px;color:#182a3b;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.filter select,.filter input{height:42px;border:1px solid #d8e0e7;background:#fff;color:#4d5962;padding:0 10px;min-width:0}.filter input{border-left:0;border-radius:0 4px 4px 0}.filter select{border-radius:4px 0 0 4px;color:#414b52}.filter.single{grid-template-columns:108px minmax(0,1fr)}.filter.single input{border-left:1px solid #d8e0e7;border-radius:4px}
-    .table-panel{position:relative;min-height:0;flex:1;display:flex;flex-direction:column;margin:0 8px;padding-right:39px;border:1px solid var(--line);background:#f5f7f9}.table-scroll{min-height:0;flex:1;overflow:auto}table{border-collapse:collapse}.data-table{width:100%;min-width:1680px;table-layout:fixed;color:#172534;font-size:16px}.data-table th,.data-table td{height:41px;padding:0 10px;border-right:1px solid #d9e2e8;border-bottom:1px solid #e4ebef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.data-table th{position:sticky;top:0;z-index:1;background:#f6f8fa;color:#536474;font-weight:600;text-align:center}.data-table td{background:#6d9bc7;color:#0b1a27}.data-table tbody tr:nth-child(even) td{background:#709fca}.data-table tbody tr.selected td{background:#63b6ee}.data-table td.center,.data-table th.center{text-align:center}.data-table td.num{text-align:right;font-variant-numeric:tabular-nums}.check{width:22px;height:22px;accent-color:#137ec1;vertical-align:middle}.code{display:inline-flex;align-items:center;gap:7px}.magnify{color:#285d83;font-size:20px;line-height:1}.table-rail{position:absolute;right:13px;top:7px;bottom:8px;width:38px;display:flex;align-items:center;justify-content:center;background:#f5f7f9;border-left:1px solid #dce4e9;color:#6a7680;writing-mode:vertical-rl;font-size:17px}.table-scroll::-webkit-scrollbar{width:14px;height:14px}.table-scroll::-webkit-scrollbar-thumb{background:#8d949a;border-radius:10px;border:3px solid #f0f4f7}.table-scroll::-webkit-scrollbar-track{background:#f0f4f7}
-    .footer{height:109px;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:10px 14px 8px;color:#183042;background:#d8f4fc}.totals{display:flex;align-items:center;gap:52px;font-size:17px}.totals b{margin-left:7px;font-weight:500}.details-link{margin-left:auto;color:#137bc2;text-decoration:underline;cursor:pointer}.pagination{display:flex;align-items:center;gap:10px;font-size:16px}.page-size,.page-input{width:89px;height:42px;border:1px solid #d3dce3;border-radius:4px;background:#fff;text-align:center}.page-input{width:50px}.page-button{width:43px;height:42px;border:0;border-radius:4px;background:transparent;color:#0879c5;font-size:21px}.page-button.active{background:#0e7bc3;color:#fff}.page-button.muted{color:#c2c8cc}
-    .toast{position:fixed;left:50%;top:75px;z-index:40;transform:translate(-50%,-12px);padding:11px 18px;color:#fff;background:#244f6b;border-radius:4px;box-shadow:0 8px 30px rgba(11,49,71,.23);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.error{background:#d83e4a}.toast.warning{background:#fff8df;color:#805500;border:1px solid #e4c06a}.overlay{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}.overlay.show{display:flex}.modal{width:960px;max-width:94vw;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;border-radius:4px;background:#fff;box-shadow:var(--shadow)}.modal-head{height:71px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #e1e7eb;color:#3b3b3b;font-size:22px}.modal-close{width:32px;height:32px;border:0;background:transparent;color:#9aa2a9;font-size:25px}.modal-body{min-height:0;overflow:auto;padding:21px 60px 14px}.request-count{margin-bottom:21px;color:#7a7f83;font-size:18px}.request-count b{color:#60666b;font-size:21px;font-weight:400}.request-count span{margin-left:13px;color:#969b9f;font-size:17px}.request-table-wrap{overflow:auto;border:1px solid #dfe7eb}.request-table{width:100%;min-width:680px;table-layout:fixed;color:#676d71;font-size:16px}.request-table th,.request-table td{height:37px;padding:0 12px;border-right:1px solid #dfe7eb;border-bottom:1px solid #dfe7eb;text-align:center;vertical-align:middle;font-size:16px}.request-table th{color:#858c91;font-weight:700;background:#fbfcfd}.request-table td{font-weight:400}.request-table th:nth-child(1){width:34%!important}.request-table th:nth-child(2){width:39%!important}.request-table th:nth-child(3){width:13%!important}.request-table th:nth-child(4){width:14%!important}.form-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:start;width:100%;margin-top:18px}.form-label{padding-top:8px;color:#323a40;font-size:17px;text-align:left;line-height:1.45}.impact-label{white-space:nowrap;font-size:16px}.required:before{content:"*";margin-right:6px;color:var(--danger)}.reason-input{width:100%;min-height:118px;resize:vertical;padding:9px 11px;border:1px solid #cfd7dd;border-radius:3px;color:#45525d}.reason-wrap{position:relative}.char-count{position:absolute;right:12px;bottom:10px;color:#9299a0;font-size:16px}.impact-box{min-width:0}.impact-table-wrap{max-height:252px;overflow:auto}.impact-toolbar{display:flex;align-items:center;justify-content:flex-end;margin-bottom:8px}.add-impact{display:none}.impact-table{width:100%;table-layout:fixed;border-collapse:collapse;color:#5d686f;font-size:14px}.impact-table th,.impact-table td{height:36px;padding:4px 6px;border:1px solid #dce5ea}.impact-table th{background:#f5f8fa;color:#69777f;font-weight:700;text-align:center;font-size:14px}.impact-table td{text-align:center;font-weight:400}.impact-table input,.impact-table select{width:100%;height:29px;border:1px solid #cdd9df;border-radius:3px;padding:0 7px;color:#3d5665;background:#fff;text-align:center}.impact-business{font-size:12px;padding:0 3px}.impact-table input[readonly]{background:#f5f7f8;color:#6f7d84}.impact-actions{display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}.impact-action{width:22px;height:24px;border:0;background:transparent;color:#0879c5;font-size:20px;line-height:1}.impact-action.remove{color:#c55b64}.impact-total{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:8px;color:#65737a;font-size:14px}.impact-total input{width:150px;height:34px;padding:0 8px;border:1px solid #cdd9df;border-radius:3px;color:#26516a;background:#f4f8fa;text-align:right;font-weight:600}.validation{display:none}.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:15px;border-top:1px solid #e1e7eb;background:#fbfcfd}.modal-btn{min-width:96px;height:42px;padding:0 17px;border:1px solid #a9d1ea;border-radius:4px;color:#0879c5;background:#fff;font-size:16px}.modal-btn.primary{color:#fff;background:#0879c5;border-color:#0879c5}.modal-btn.primary:hover{background:#066caf}
-    @media(max-width:1450px){.sidebar{width:42px;flex-basis:42px}.brand{height:57px;font-size:27px}.side-item{height:42px;font-size:18px}.topbar{height:42px;padding:0 10px 0 14px}.top-info{gap:12px;font-size:12px}.top-info select{min-width:86px;height:30px;padding:0 18px 0 8px}.top-icon{font-size:18px}.top-icon.square{font-size:20px}.tabs{height:31px;padding-left:8px}.tab{min-width:62px;padding:0 9px;font-size:12px}.tab .close{margin-left:6px;font-size:14px}.toolbar{height:44px;gap:5px;padding:0 6px}.toolbar-btn{height:29px;padding:0 11px;gap:6px;font-size:12px}.toolbar-btn.collapse{width:35px;font-size:20px}.toolbar-btn.has-arrow:after{font-size:15px}.query-panel{height:110px;margin:5px 5px 8px;padding:8px 7px}.query-grid{column-gap:10px;row-gap:8px}.filter{grid-template-columns:72px 70px minmax(0,1fr)}.filter.single{grid-template-columns:72px minmax(0,1fr)}.filter label{font-size:12px;padding-right:5px}.filter select,.filter input{height:28px;padding:0 7px;font-size:12px}.table-panel{margin:0 5px;padding-right:32px}.data-table{min-width:1500px;font-size:12px}.data-table th,.data-table td{height:30px;padding:0 7px}.check{width:17px;height:17px}.magnify{font-size:15px}.table-rail{right:9px;width:31px;font-size:13px}.footer{height:62px;gap:5px;padding:5px 8px 4px}.totals{gap:20px;font-size:12px}.pagination{gap:7px;font-size:12px}.page-size,.page-input{height:28px}.page-size{width:62px}.page-input{width:40px}.page-button{width:28px;height:28px;font-size:16px}}
+    :root {
+      --wx-blue: #287cf0;
+      --wx-blue-dark: #1366d8;
+      --wx-blue-soft: #e9f3ff;
+      --ink: #1f2d3d;
+      --muted: #718096;
+      --line: #e5e9ef;
+      --canvas: #f6f8fb;
+      --white: #ffffff;
+      --danger: #f04444;
+      --shadow: 0 16px 40px rgba(31, 53, 79, .09);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--canvas);
+      font-size: 15px;
+      letter-spacing: .01em;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      padding: 0 26px 0 34px;
+      border-bottom: 1px solid #dfe5ed;
+      background: #f8fafc;
+      gap: 28px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .brand { width: 210px; display: flex; align-items: center; gap: 13px; color: #162b44; font-size: 17px; font-weight: 700; }
+    .brand-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--wx-blue); position: relative; box-shadow: 0 5px 12px rgba(40,124,240,.28); }
+    .brand-mark::after { content: ""; position: absolute; inset: 7px; border: 2px solid #fff; border-radius: 5px; opacity: .9; }
+    .crumb { color: #7c8a9b; font-size: 14px; display: flex; align-items: center; gap: 11px; }
+    .crumb b { color: #26364a; font-weight: 600; }
+    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 24px; color: #6c7c8f; }
+    .top-actions .mini { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .mini-dot { width: 8px; height: 8px; border-radius: 50%; background: #23b26d; box-shadow: 0 0 0 4px rgba(35,178,109,.12); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; color: #fff; background: linear-gradient(135deg,#89b4f8,#3a75d5); display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .body { flex: 1; display: flex; min-height: calc(100vh - 70px); }
+    .rail { width: 92px; border-right: 1px solid #e2e8f0; background: #f9fbfd; padding: 18px 10px; display:flex; flex-direction: column; align-items:center; gap: 10px; }
+    .rail-item { width: 70px; min-height: 60px; border-radius: 12px; color: #7c8da1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 7px; font-size: 12px; border: 1px solid transparent; }
+    .rail-item .rail-icon { width: 24px; height: 24px; border-radius: 7px; background: #dbe7f4; color: #6985a6; display:flex; align-items:center; justify-content:center; font-size: 13px; font-weight: 700; }
+    .rail-item.active { background: #eaf3ff; color: var(--wx-blue); border-color: #d7e9ff; }
+    .rail-item.active .rail-icon { background: var(--wx-blue); color: #fff; }
+    .rail-spacer { flex: 1; }
+    .workspace { flex: 1; padding: 26px 34px 42px; overflow: auto; }
+    .page-head { max-width: 1120px; margin: 0 auto 18px; display:flex; align-items:flex-start; justify-content:space-between; gap: 20px; }
+    .title-wrap { display:flex; align-items:flex-start; gap: 15px; }
+    .back { border: 0; background: transparent; color: #61748c; font-size: 28px; line-height: 1; padding: 2px 4px; }
+    .page-title { margin: 0; font-size: 23px; line-height: 1.25; color: #192b41; font-weight: 700; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .head-actions { display:flex; align-items:center; gap: 10px; }
+    .status-pill { display:inline-flex; align-items:center; gap: 8px; padding: 7px 11px; border-radius: 99px; background: #eef8f2; color: #187c4d; font-size: 13px; white-space: nowrap; }
+    .status-pill i { width: 7px; height: 7px; border-radius: 50%; background: #29b673; }
+    .ghost-btn { height: 36px; padding: 0 13px; border: 1px solid #d7e1ed; border-radius: 7px; background: #fff; color: #53657a; }
+    .form-card { max-width: 1120px; margin: 0 auto; background: var(--white); border: 1px solid #e1e7ef; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .form-section { padding: 28px 42px 6px; }
+    .section-title { display:flex; align-items:center; gap: 10px; color: #26384d; font-size: 16px; font-weight: 700; margin: 0 0 22px; }
+    .section-title::before { content: ""; width: 4px; height: 18px; background: var(--wx-blue); border-radius: 4px; }
+    .section-desc { margin: -14px 0 20px 14px; color: #95a2b1; font-size: 13px; }
+    .field-grid { display:grid; grid-template-columns: 1fr 1fr; column-gap: 42px; row-gap: 20px; }
+    .field { display:grid; grid-template-columns: 112px minmax(0,1fr); align-items:center; gap: 16px; min-height: 42px; }
+    .field.full { grid-column: 1 / -1; }
+    .field-label { color: #425368; line-height: 1.45; }
+    .required::before { content: "*"; color: var(--danger); margin-right: 4px; }
+    .control, .select-control, .multi-control, .file-control, .textarea {
+      min-width: 0; width: 100%; border: 1px solid #d6dee8; border-radius: 7px; background: #fff; color: #283b52; transition: .16s ease; }
+    .control, .select-control, .multi-control { height: 42px; padding: 0 13px; }
+    .control::placeholder, .textarea::placeholder { color: #aeb9c6; }
+    .control:focus, .select-control:focus, .multi-control:focus, .textarea:focus { outline: none; border-color: #70aaf9; box-shadow: 0 0 0 3px rgba(40,124,240,.1); }
+    .select-wrap { position:relative; }
+    .select-control { appearance: none; padding-right: 36px; }
+    .select-wrap::after { content:"⌄"; position:absolute; right: 13px; top: 8px; color: #7e8b9b; font-size: 19px; pointer-events:none; }
+    .multi-control { min-height: 42px; height:auto; padding: 6px 36px 6px 9px; display:flex; flex-wrap:wrap; gap: 6px; position:relative; }
+    .multi-control::after { content:"⌄"; position:absolute; right: 13px; top: 8px; color: #7e8b9b; font-size: 19px; }
+    .tag { display:inline-flex; align-items:center; gap: 4px; height: 28px; padding: 0 8px; border-radius: 5px; background: #edf5ff; color:#296cc1; font-size:13px; }
+    .tag button { border: 0; background: transparent; color:#7ca4d9; padding:0 0 0 3px; font-size: 16px; line-height: 1; }
+    .placeholder { color:#aeb9c6; line-height: 28px; }
+    .checkbox-grid { display:grid; grid-template-columns: repeat(5, minmax(110px,1fr)); gap: 12px 18px; }
+    .check { display:flex; align-items:center; gap: 8px; min-height: 26px; color: #56687b; font-size: 14px; cursor:pointer; user-select:none; }
+    .check input { position:absolute; opacity:0; pointer-events:none; }
+    .checkmark { width: 17px; height:17px; border: 1px solid #bdc9d7; border-radius: 4px; background: #fff; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size: 12px; transition:.16s; }
+    .check input:checked + .checkmark { background: var(--wx-blue); border-color: var(--wx-blue); }
+    .check input:checked + .checkmark::after { content:"✓"; }
+    .check:hover .checkmark { border-color: #76aaf1; }
+    .business-grid { display:grid; grid-template-columns: repeat(6, minmax(105px,1fr)); gap: 14px 22px; }
+    .upload-box { display:flex; align-items:center; gap: 11px; flex-wrap:wrap; }
+    .upload-btn { position:relative; display:inline-flex; align-items:center; justify-content:center; height: 38px; padding: 0 17px; background: var(--wx-blue); border: 1px solid var(--wx-blue); border-radius: 6px; color:#fff; font-weight: 600; overflow:hidden; }
+    .upload-btn:hover, .primary:hover { background: var(--wx-blue-dark); }
+    .upload-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .upload-hint { color:#8b99a9; font-size:13px; }
+    .file-name { display:none; align-items:center; gap: 8px; max-width: 280px; padding: 7px 10px; border-radius: 6px; background: #f4f8fc; color:#52667e; font-size:13px; }
+    .file-name.show { display:inline-flex; }
+    .file-name button { border: 0; background: transparent; color:#91a0b0; padding:0; font-size: 16px; }
+    .textarea { resize: vertical; min-height: 110px; padding: 11px 13px; line-height: 1.6; }
+    .field.full .counter { text-align:right; color:#a0acb9; font-size:12px; margin-top: 5px; }
+    .form-divider { height: 1px; background:#edf0f4; margin: 24px 42px 0; }
+    .approval { padding: 27px 42px 120px; }
+    .approval-head { display:flex; align-items:center; justify-content:space-between; gap: 15px; }
+    .approval-note { color:#8b99a8; font-size:13px; }
+    .approval-route { margin-top: 20px; display:flex; align-items:center; gap: 0; }
+    .node { display:flex; align-items:center; gap: 10px; color:#344b63; font-weight:600; }
+    .node-avatar { width: 34px; height: 34px; border-radius:50%; background:#e1ecfb; color:#3874c7; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .node-badge { margin-left: 2px; padding: 2px 6px; border-radius: 4px; font-size: 11px; color:#2d7ee7; background:#eaf3ff; font-weight:500; }
+    .route-line { width: 78px; height:1px; background:#cad7e5; margin: 0 15px; position:relative; }
+    .route-line::after { content:""; position:absolute; right:-1px; top:-3px; width:6px; height:6px; border-right:1px solid #a8bad0; border-top:1px solid #a8bad0; transform:rotate(45deg); }
+    .sticky-actions { position:sticky; bottom:0; z-index:10; height:76px; border-top:1px solid #e7ebf1; background:rgba(255,255,255,.96); display:flex; align-items:center; justify-content:center; gap: 16px; backdrop-filter: blur(8px); }
+    .primary, .secondary { min-width: 130px; height: 44px; border-radius: 7px; font-size: 16px; font-weight: 600; }
+    .primary { color:#fff; background: var(--wx-blue); border:1px solid var(--wx-blue); box-shadow:0 6px 14px rgba(40,124,240,.2); }
+    .secondary { color:#41556d; background:#fff; border:1px solid #d7e0eb; }
+    .secondary:hover { background:#f7f9fb; }
+    .toast { position: fixed; left: 50%; top: 22px; transform: translate(-50%, -18px); opacity:0; pointer-events:none; z-index:100; background:#1f2e41; color:#fff; padding: 11px 18px; border-radius:7px; box-shadow:0 10px 24px rgba(0,0,0,.2); transition:.22s ease; font-size:14px; }
+    .toast.show { opacity:1; transform:translate(-50%,0); }
+    @media (max-width: 1050px) {
+      .field-grid { grid-template-columns:1fr; }
+      .checkbox-grid { grid-template-columns: repeat(4, minmax(115px,1fr)); }
+      .business-grid { grid-template-columns: repeat(3, minmax(125px,1fr)); }
+      .page-head { align-items:flex-start; }
+    }
+    @media (max-width: 720px) {
+      .topbar { padding:0 14px; gap:12px; }
+      .brand { width:auto; font-size:15px; }
+      .crumb, .top-actions .mini { display:none; }
+      .rail { display:none; }
+      .workspace { padding:18px 10px 28px; }
+      .form-section, .approval { padding-left:18px; padding-right:18px; }
+      .form-divider { margin-left:18px; margin-right:18px; }
+      .field { grid-template-columns:1fr; gap:7px; }
+      .checkbox-grid { grid-template-columns: repeat(2, minmax(120px,1fr)); }
+      .business-grid { grid-template-columns: repeat(2, minmax(120px,1fr)); }
+      .approval-route { flex-wrap:wrap; row-gap:12px; }
+      .route-line { width:28px; }
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar" aria-label="主导航"><div class="brand" aria-label="海运系统">C</div><button class="side-item active" aria-label="工作台">▱</button><button class="side-item" aria-label="单证">▤</button><button class="side-item" aria-label="客户">♙</button><button class="side-item" aria-label="工具">⚒</button><button class="side-item" aria-label="费用">♙</button><button class="side-item" aria-label="运输">▣</button><button class="side-item" aria-label="账单">▤</button><button class="side-item" aria-label="其他">⌁</button><div class="side-spacer"></div><button class="side-item" aria-label="帮助">?</button><button class="side-item" aria-label="设置">⚙</button></aside>
-    <main class="main">
-      <header class="topbar"><div class="top-info"><span>平台ID：<b>P22216</b></span><span>用户：<b>王江哲</b></span><label>公司：<select aria-label="公司"><option>HC</option></select></label><label>部门：<select aria-label="部门"><option>杭州市市场部</option></select></label><span class="top-icon" aria-label="通知">♧</span><span class="top-icon" aria-label="语言">A文</span><span class="top-icon square" aria-label="应用">▦</span></div></header>
-      <nav class="tabs" aria-label="页签"><div class="tab">首页</div><div class="tab active">销售查询 <span class="close">×</span></div></nav>
-      <section class="toolbar" aria-label="业务操作"><button class="toolbar-btn collapse" aria-label="收起查询条件">⌃</button><button class="toolbar-btn">查询</button><button class="toolbar-btn green">查看</button><button class="toolbar-btn">统计</button><button class="toolbar-btn has-arrow">新增费用</button><button class="toolbar-btn has-arrow">批量打印</button><button class="toolbar-btn has-arrow">批量处理</button><button class="toolbar-btn">临时放单申请</button><button class="toolbar-btn" id="unlockBtn">申请解锁</button></section>
-      <div class="content">
-        <section class="query-panel" aria-label="查询条件"><div class="query-grid"><div class="filter"><label>业务编号</label><select><option>等于</option><option>包含</option></select><input aria-label="业务编号" /></div><div class="filter"><label>项目编号</label><select><option>等于</option><option>包含</option></select><input aria-label="项目编号" /></div><div class="filter"><label>港前审核状态</label><select><option>包含</option><option>等于</option></select><input aria-label="港前审核状态" /></div><div class="filter"><label>业务状态</label><select><option>包含</option><option>等于</option></select><input value="已审核" aria-label="业务状态" /></div><div class="filter"><label>干线审核状态</label><select><option>包含</option><option>等于</option></select><input aria-label="干线审核状态" /></div><div class="filter"><label>尾程审核状态</label><select><option>包含</option><option>等于</option></select><input aria-label="尾程审核状态" /></div><div class="filter"><label>合同状态</label><select><option>包含</option><option>等于</option></select><input aria-label="合同状态" /></div><div class="filter single"><label>承运人</label><input aria-label="承运人" /></div></div></section>
-        <section class="table-panel" aria-label="销售查询结果"><div class="table-scroll"><table class="data-table"><thead><tr><th class="center" style="width:66px"><input id="allCheck" class="check" type="checkbox" aria-label="全选" /></th><th style="width:200px">业务编号</th><th style="width:110px">承运人</th><th style="width:100px">运输公司</th><th style="width:100px">状态</th><th style="width:100px">已计提</th><th style="width:105px">利润</th><th style="width:110px">船名</th><th style="width:100px">航次</th><th style="width:120px">客户</th><th style="width:110px">业务日期</th><th style="width:110px">合同状态</th><th style="width:110px">风控原因</th><th style="width:110px">往来客户</th></tr></thead><tbody id="dataBody"></tbody></table></div><div class="table-rail">设置列</div></section>
-        <footer class="footer"><div class="totals"><span>收入总计：<b>78300</b></span><span>利润总计：<b>76482</b></span><span>票数：<b>4</b></span><span>箱型箱量：<b>5*20',5TEU</b></span><span>应收费用利息：<b>5358.27</b></span><span class="details-link">合计详情</span></div><div class="pagination"><span>共 141 条</span><select class="page-size" aria-label="每页条数"><option>50</option><option>100</option></select><b>条/页</b><button class="page-button muted" aria-label="上一页">‹</button><button class="page-button active">1</button><button class="page-button">2</button><button class="page-button">3</button><button class="page-button">›</button><span style="margin-left:17px">前往</span><input class="page-input" value="1" aria-label="页码" /><span>页</span></div></footer>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>企业微信 · 审批中心</span></div>
+      <div class="crumb"><span>工作台</span><span>/</span><b>新增供应商申请</b></div>
+      <div class="top-actions">
+        <span class="mini"><span class="mini-dot"></span>模板已同步</span>
+        <span class="mini">杭州市场部</span>
+        <span class="avatar">王</span>
       </div>
-    </main>
+    </header>
+    <div class="body">
+      <aside class="rail" aria-label="应用导航">
+        <div class="rail-item"><span class="rail-icon">⌂</span><span>工作台</span></div>
+        <div class="rail-item"><span class="rail-icon">◌</span><span>消息</span></div>
+        <div class="rail-item"><span class="rail-icon">▣</span><span>文档</span></div>
+        <div class="rail-item active"><span class="rail-icon">✓</span><span>审批</span></div>
+        <div class="rail-item"><span class="rail-icon">▦</span><span>日程</span></div>
+        <div class="rail-item"><span class="rail-icon">▰</span><span>会议</span></div>
+        <div class="rail-spacer"></div>
+        <div class="rail-item"><span class="rail-icon">···</span><span>更多</span></div>
+      </aside>
+      <main class="workspace">
+        <div class="page-head">
+          <div class="title-wrap">
+            <button class="back" aria-label="返回">‹</button>
+            <div>
+              <h1 class="page-title">新增供应商申请（沃行）</h1>
+              <p class="subtitle">审批单据模板 · 新增供应商信息将同步至供应商主数据</p>
+            </div>
+          </div>
+          <div class="head-actions">
+            <span class="status-pill"><i></i>企业微信模板</span>
+          </div>
+        </div>
+        <form class="form-card" id="supplierForm" novalidate>
+          <section class="form-section">
+            <h2 class="section-title">供应商基础信息</h2>
+            <p class="section-desc">带 <span style="color:var(--danger)">*</span> 的字段为必填项，审批通过后将同步到供应商档案。</p>
+            <div class="field-grid">
+              <label class="field"><span class="field-label required">新增供应商名称</span><input class="control required-input" name="supplierName" placeholder="请填写供应商名称" /></label>
+              <label class="field"><span class="field-label required">国内 / 境外</span><span class="select-wrap"><select class="select-control required-input" name="region"><option value="">请选择</option><option>国内</option><option>境外</option></select></span></label>
+              <label class="field"><span class="field-label required">中文名称</span><input class="control required-input" name="cnName" placeholder="请填写中文名称" /></label>
+              <label class="field"><span class="field-label required">简称</span><input class="control required-input" name="shortName" placeholder="请填写简称" /></label>
+              <label class="field"><span class="field-label required">英文名称</span><input class="control required-input" name="enName" placeholder="请填写英文名称" /></label>
+              <label class="field"><span class="field-label required">是否同行</span><span class="select-wrap"><select class="select-control required-input" name="peer"><option selected>否</option><option>是</option></select></span></label>
+              <label class="field"><span class="field-label required">有无合同</span><span class="select-wrap"><select class="select-control required-input" name="contract"><option selected>是</option><option>否</option></select></span></label>
+              <label class="field"><span class="field-label required">地址</span><input class="control required-input" name="address" placeholder="请填写注册地址或办公地址" /></label>
+            </div>
+          </section>
+          <section class="form-section">
+            <h2 class="section-title">供应商角色</h2>
+            <div class="checkbox-grid" data-group="role">
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>订舱代理/换单代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>船代</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>目的港代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>指定货代</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>本地代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>结算代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>船公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>航空公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>清关行</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>仓库</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>卡车公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>发货人</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>收货人</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>通知人</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>口岸代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>发运代理</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>装货地公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>签单地公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>码头公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>卸货港公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>目的港公司</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>贸易商</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>工厂/生产商</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>其他</label>
+            </div>
+          </section>
+          <section class="form-section">
+            <h2 class="section-title">相关业务类型</h2>
+            <div class="business-grid" data-group="business">
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>海运出口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>海运进口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>空运出口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>空运进口</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>铁路业务</label>
+              <label class="check"><input type="checkbox"><span class="checkmark"></span>综合物流</label>
+            </div>
+          </section>
+          <section class="form-section">
+            <h2 class="section-title">审批材料</h2>
+            <div class="field-grid">
+              <div class="field full"><span class="field-label required">供应商档案</span><div class="upload-box"><label class="upload-btn">上传档案<input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" /></label><span class="upload-hint">支持 PDF、Word、Excel、图片，单个文件不超过 20MB</span><span class="file-name" id="fileName"><span>📎</span><span id="fileText"></span><button type="button" id="removeFile" aria-label="移除附件">×</button></span></div></div>
+              <label class="field full"><span class="field-label required">审批内容简述</span><span><textarea class="textarea required-input" id="summary" maxlength="500" name="summary" placeholder="请简要说明新增供应商的原因、合作范围及业务背景"></textarea><div class="counter"><span id="count">0</span>/500</div></span></label>
+            </div>
+          </section>
+          <div class="form-divider"></div>
+          <section class="approval">
+            <div class="approval-head"><div><h2 class="section-title" style="margin-bottom:0">审批流程</h2><div class="approval-note">已由管理员预设，不可修改审批人和抄送人</div></div></div>
+            <div class="approval-route">
+              <div class="node"><span class="node-avatar">发</span><span>发起人</span></div><span class="route-line"></span>
+              <div class="node"><span class="node-avatar">审</span><span>供应链负责人</span><span class="node-badge">或签</span></div><span class="route-line"></span>
+              <div class="node"><span class="node-avatar">财</span><span>财务负责人</span></div>
+            </div>
+          </section>
+          <div class="sticky-actions"><button class="primary" type="submit">提交审批</button><button class="secondary" type="button" id="cancelBtn">取消</button></div>
+        </form>
+      </main>
+    </div>
   </div>
-
-  <div class="overlay" id="unlockOverlay" aria-hidden="true"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle"><header class="modal-head"><span id="unlockTitle">费用解锁申请</span><button class="modal-close" id="closeModal" aria-label="关闭">×</button></header><div class="modal-body"><div class="request-count">本次申请订单数：<b id="requestCount">0</b><span>（单次最多200单）</span></div><div class="request-table-wrap"><table class="request-table"><thead><tr><th style="width:42%">业务编号</th><th style="width:31%">委托单位</th><th style="width:13%">是否计提</th><th style="width:14%">利润</th></tr></thead><tbody id="requestBody"></tbody></table></div><div class="form-row"><label class="form-label required" for="reason">解锁申请原因</label><div class="reason-wrap"><textarea id="reason" class="reason-input" maxlength="500" placeholder="请输入解锁申请原因"></textarea><span class="char-count"><b id="reasonCount">0</b>/500</span></div></div><div class="form-row"><div class="form-label required impact-label">申报毛利影响金额</div><div class="impact-box"><div class="impact-table-wrap"><table class="impact-table"><thead><tr><th style="width:24%">影响方向</th><th style="width:26%">原币金额合计</th><th style="width:16%">币种</th><th style="width:16%">汇率</th><th style="width:18%">本币金额合计（人民币）</th></tr></thead><tbody id="impactBody"></tbody></table></div><div class="impact-total"><span>本币金额合计（人民币）</span><input id="impactTotal" type="number" min="0" step="0.01" inputmode="decimal" value="0.00" aria-label="申报毛利影响金额合计" /></div></div></div></div><footer class="modal-foot"><button class="modal-btn primary" id="submitUnlock">提交申请</button><button class="modal-btn" id="cancelUnlock">取消</button></footer></section></div><div class="toast" id="toast"></div>
-
+  <div class="toast" id="toast" role="status"></div>
   <script>
-    const records=[
-      {code:'HCSEHC26060027',owner:'测试全角色',accrual:'否',profit:'3,416.61',status:'已审核',ship:'NYK VENUS',voyage:'026W',customer:'测试全角色',date:'2026-06-27',contract:'已签约',risk:'超ETD',relation:''},
-      {code:'HCSEHC26050026',owner:'杭州恒远国际货运代理有限公司',accrual:'否',profit:'3,407.15',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-26',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26060026',owner:'宁波海程供应链有限公司',accrual:'否',profit:'2,543.97',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-06-30',contract:'已签约',risk:'',relation:''},
-      {code:'HCSEHC26050025',owner:'浙江嘉运物流有限公司',accrual:'否',profit:'50.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-23',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26060024',owner:'杭州环洋国际货运代理有限公司',accrual:'是',profit:'605.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-06-15',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26060023',owner:'上海瀚洋供应链有限公司',accrual:'是',profit:'0.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-06-12',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26050022',owner:'宁波港联国际物流有限公司',accrual:'否',profit:'1,011.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-26',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26050021',owner:'浙江远洋物流有限公司',accrual:'否',profit:'-400.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-28',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26050020',owner:'杭州华航供应链有限公司',accrual:'否',profit:'0.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-28',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26050019',owner:'宁波荣程国际货运代理有限公司',accrual:'否',profit:'-400.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-28',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26050018',owner:'上海合盛国际物流有限公司',accrual:'否',profit:'124.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-27',contract:'未签约',risk:'',relation:''},
-      {code:'HCSEHC26050017',owner:'杭州汇通物流有限公司',accrual:'否',profit:'87.00',status:'已审核',ship:'',voyage:'',customer:'',date:'2026-05-27',contract:'未签约',risk:'',relation:''}
-    ];
-    const selected=new Set([0,1,2,3]);let impactRows=[{direction:'increase',amount:'0',currency:'RMB'}];const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-    function renderDataRows(){
-      $('#dataBody').innerHTML=records.map((record,index)=>`<tr class="${selected.has(index)?'selected':''}" data-index="${index}"><td class="center"><input class="check row-check" data-index="${index}" type="checkbox" ${selected.has(index)?'checked':''} aria-label="选择 ${record.code}" /></td><td><span class="code">${record.code}<span class="magnify">⌕</span></span></td><td>${record.owner}</td><td></td><td>${record.status}</td><td class="center">${record.accrual}</td><td class="num">${record.profit}</td><td>${record.ship}</td><td>${record.voyage}</td><td>${record.customer}</td><td>${record.date}</td><td>${record.contract}</td><td>${record.risk}</td><td>${record.relation}</td></tr>`).join('');
-      $$('.row-check').forEach(check=>check.addEventListener('change',()=>{const index=Number(check.dataset.index);if(check.checked)selected.add(index);else selected.delete(index);check.closest('tr').classList.toggle('selected',check.checked);$('#allCheck').checked=selected.size===records.length}));$('#allCheck').checked=selected.size===records.length;
+    const form = document.getElementById('supplierForm');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
     }
-    function showToast(message,type='info'){const toast=$('#toast');toast.textContent=message;toast.classList.toggle('error',type==='error');toast.classList.toggle('warning',type==='warning');toast.classList.add('show');window.clearTimeout(showToast.timer);showToast.timer=window.setTimeout(()=>toast.classList.remove('show'),type==='error'||type==='warning'?4200:2600)}
-    function getSelectedRecords(){return[...selected].sort((a,b)=>a-b).map(index=>records[index])}
-    function renderRequestTable(){const chosen=getSelectedRecords();$('#requestCount').textContent=chosen.length;$('#requestBody').innerHTML=chosen.map(record=>`<tr><td>${record.code}</td><td>${record.owner}</td><td>${record.accrual}</td><td>${record.profit}</td></tr>`).join('')}
-    function rateFor(currency){return currency==='USD'?7.2:1}
-    function renderImpactRows(){
-      $('#impactBody').innerHTML=impactRows.map((row,index)=>{const amount=Number(row.amount)||0;const local=amount*rateFor(row.currency);return`<tr data-impact-index="${index}"><td><select class="impact-direction" aria-label="影响方向"><option value="increase" ${row.direction==='increase'?'selected':''}>增加</option><option value="decrease" ${row.direction==='decrease'?'selected':''}>减少</option></select></td><td><input class="impact-amount" type="number" min="0" step="0.01" value="${row.amount}" aria-label="原币金额合计" /></td><td><select class="impact-currency" aria-label="币种"><option value="RMB" ${row.currency==='RMB'?'selected':''}>人民币</option><option value="USD" ${row.currency==='USD'?'selected':''}>美元</option></select></td><td><input type="text" value="${rateFor(row.currency).toFixed(4)}" readonly aria-label="汇率" /></td><td><input class="impact-local" type="text" value="${local.toFixed(2)}" readonly aria-label="本币金额合计（人民币）" /></td></tr>`}).join('');
-      $$('.impact-direction').forEach(select=>select.addEventListener('change',()=>{const index=Number(select.closest('tr').dataset.impactIndex);impactRows[index].direction=select.value}));
-      $$('.impact-amount').forEach(input=>input.addEventListener('input',()=>{const index=Number(input.closest('tr').dataset.impactIndex);impactRows[index].amount=input.value;const local=Number(input.value||0)*rateFor(impactRows[index].currency);input.closest('tr').querySelector('.impact-local').value=local.toFixed(2);const total=impactRows.reduce((sum,row)=>sum+(Number(row.amount)||0)*rateFor(row.currency),0);$('#impactTotal').value=total.toFixed(2)}));
-      $$('.impact-currency').forEach(select=>select.addEventListener('change',()=>{const index=Number(select.closest('tr').dataset.impactIndex);impactRows[index].currency=select.value;renderImpactRows()}));
-      const total=impactRows.reduce((sum,row)=>sum+(Number(row.amount)||0)*rateFor(row.currency),0);$('#impactTotal').value=total.toFixed(2);
-    }
-    function openUnlock(){const chosen=getSelectedRecords();if(!chosen.length){showToast('请先选择需要申请解锁的业务单据');return}const offending=chosen.filter(record=>record.accrual==='是');if(offending.length){const codes=offending.slice(0,3).map(record=>`【${record.code}】`).join('');const suffix=offending.length>3?'...':'';showToast(`${codes}${suffix}业务单据为已计提状态，请注意是否需操作解锁。`,'warning')}renderRequestTable();impactRows=[{direction:'increase',amount:'0',currency:'RMB'}];renderImpactRows();$('#reason').value='';$('#reasonCount').textContent='0';$('#unlockOverlay .modal-body').scrollTop=0;$('#unlockOverlay').classList.add('show');$('#unlockOverlay').setAttribute('aria-hidden','false')}
-    function closeUnlock(){$('#unlockOverlay').classList.remove('show');$('#unlockOverlay').setAttribute('aria-hidden','true')}
-    renderDataRows();renderImpactRows();$('#allCheck').addEventListener('change',event=>{records.forEach((_,index)=>event.target.checked?selected.add(index):selected.delete(index));renderDataRows()});$('#unlockBtn').addEventListener('click',openUnlock);$('#closeModal').addEventListener('click',closeUnlock);$('#cancelUnlock').addEventListener('click',closeUnlock);$('#unlockOverlay').addEventListener('click',event=>{if(event.target===$('#unlockOverlay'))closeUnlock()});$('#reason').addEventListener('input',event=>{$('#reasonCount').textContent=event.target.value.length});$('#impactTotal').addEventListener('input',event=>{const row=impactRows[0]||{direction:'increase',amount:'0',currency:'RMB'};const total=Math.max(0,Number(event.target.value)||0);const rate=rateFor(row.currency);row.amount=(total/(rate||1)).toFixed(2);impactRows[0]=row;const amountInput=$('.impact-amount');const localInput=$('.impact-local');if(amountInput)amountInput.value=row.amount;if(localInput)localInput.value=total.toFixed(2)});$('#submitUnlock').addEventListener('click',()=>{if(!$('#reason').value.trim()){showToast('请输入解锁申请原因后再提交。','error');return}closeUnlock();showToast('解锁申请已提交')});
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const fileText = document.getElementById('fileText');
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files.length) return;
+      fileText.textContent = fileInput.files[0].name;
+      fileName.classList.add('show');
+    });
+    document.getElementById('removeFile').addEventListener('click', () => { fileInput.value = ''; fileName.classList.remove('show'); });
+    const summary = document.getElementById('summary');
+    summary.addEventListener('input', () => { document.getElementById('count').textContent = summary.value.length; });
+    function clearErrors() { document.querySelectorAll('.required-input').forEach(el => el.style.borderColor = ''); }
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      clearErrors();
+      let firstInvalid = null;
+      document.querySelectorAll('.required-input').forEach(el => {
+        if (!String(el.value || '').trim()) { el.style.borderColor = 'var(--danger)'; if (!firstInvalid) firstInvalid = el; }
+      });
+      if (firstInvalid) {
+        firstInvalid.focus();
+        showToast('请先补充标记为必填的字段');
+        return;
+      }
+      showToast('已生成审批单，正在提交至企业微信');
+    });
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      if (confirm('确定要取消本次填写吗？')) {
+        form.reset();
+        document.getElementById('count').textContent = '0';
+        fileName.classList.remove('show');
+        clearErrors();
+        showToast('已取消本次填写');
+      }
+    });
   </script>
 </body>
 </html>
