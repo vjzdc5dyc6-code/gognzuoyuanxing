@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>合作伙伴申请原型</title>
+  <style>
+    :root {
+      --blue: #0878c9;
+      --blue-dark: #0565ae;
+      --blue-light: #e8f5fe;
+      --line: #d9e0e7;
+      --muted: #66717d;
+      --bg: #edf5fa;
+      --danger: #e34b55;
+      --text: #26313b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 0;
+      color: var(--text);
+      background: var(--bg);
+      font: 13px/1.35 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; position: relative; }
+    .topbar {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      padding: 0 18px 0 68px;
+      overflow: hidden;
+      background: #fff;
+      border-bottom: 1px solid #e4e8ec;
+    }
+    .brand-mark {
+      position: absolute; left: 0; top: 0; width: 54px; height: 50px;
+      display: grid; place-items: center; color: #1f262d; font-size: 29px; font-weight: 800;
+      border-right: 1px solid #e4e8ec;
+    }
+    .top-item { white-space: nowrap; color: #202931; }
+    .top-item b { font-weight: 400; color: #65717e; margin-left: 8px; }
+    .top-select { min-width: 108px; padding: 6px 24px 6px 9px; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+    .top-icon { font-size: 20px; color: #29343d; }
+    .side-nav {
+      position: absolute; z-index: 2; left: 0; top: 50px; bottom: 0; width: 54px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      padding-top: 12px; background: #0876c5;
+    }
+    .side-nav button {
+      width: 54px; height: 38px; border: 0; color: #eaf6ff; background: transparent; font-size: 19px;
+    }
+    .side-nav button.active { background: #075fa4; border-left: 4px solid #fff; }
+    .main { margin-left: 54px; padding: 0 6px 16px; }
+    .tabs { height: 41px; display: flex; align-items: end; background: #fff; border-bottom: 1px solid #d8e0e7; }
+    .tab { padding: 11px 19px 10px; color: #31404b; border-right: 1px solid #d8e0e7; }
+    .tab.active { background: #d7f1ff; color: var(--blue-dark); }
+    .tab .close { margin-left: 10px; color: #7c8790; }
+    .toolbar {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 5px; padding: 8px 6px 7px; background: #d5f4ff;
+      white-space: nowrap; overflow: hidden;
+    }
+    .search { width: 220px; height: 32px; padding: 0 10px; border: 1px solid #d4dde5; border-radius: 4px; background: #fff; }
+    .primary, .secondary, .danger {
+      min-height: 32px; padding: 0 11px; border: 1px solid transparent; border-radius: 4px; color: #fff;
+    }
+    .primary { background: var(--blue); }
+    .primary:hover { background: var(--blue-dark); }
+    .secondary { background: #fff; border-color: var(--blue); color: var(--blue-dark); }
+    .danger { background: var(--danger); }
+    .toolbar .primary { padding: 0 10px; }
+    .table-wrap { margin: 0 8px; border: 1px solid #d5dde5; background: #f7f9fb; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td { height: 37px; padding: 0 8px; border-right: 1px solid #d8dfe6; border-bottom: 1px solid #d8dfe6; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    th { background: #f3f6f8; color: #52606b; font-weight: 600; }
+    td { background: #fff; }
+    tr.selected td { background: #9edfff; }
+    .fake-scroll { height: 72px; background: #f1f5f8; position: relative; }
+    .fake-scroll::after { content: ""; position: absolute; left: 210px; right: 40%; bottom: 9px; height: 11px; border-radius: 10px; background: #8e9ca9; }
+    .pager { display: flex; align-items: center; gap: 7px; padding: 10px 6px; color: #53616d; }
+    .page-box { width: 58px; height: 32px; border: 1px solid #dae1e8; background: #fff; border-radius: 3px; text-align: center; padding-top: 7px; }
+    .page-box.current { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .pager .spacer { flex: 1; }
+    .helper { color: var(--muted); font-size: 12px; }
+
+    .overlay { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 14px; background: rgba(26, 41, 54, .45); }
+    .overlay.open { display: flex; }
+    .modal {
+      width: min(1060px, 94vw); max-height: 94vh; display: flex; flex-direction: column; overflow: hidden;
+      background: #fff; border-radius: 4px; box-shadow: 0 12px 45px rgba(0,0,0,.24);
+    }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 17px; border-bottom: 1px solid #e0e5ea; }
+    .modal-head h2 { margin: 0; font-size: 20px; font-weight: 500; }
+    .close-modal { width: 25px; height: 25px; border: 0; background: transparent; color: #7c8790; font-size: 23px; line-height: 1; }
+    .modal-body { overflow-y: auto; padding: 13px 17px 18px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; row-gap: 8px; }
+    .field { display: grid; grid-template-columns: 94px minmax(0, 1fr); gap: 8px; align-items: center; min-height: 30px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: #27323c; }
+    .required::before { content: "*"; color: #ef4444; margin-right: 4px; }
+    .control, .field select, .field input:not([type="checkbox"]), .field textarea { width: 100%; min-width: 0; border: 1px solid #d3dce5; border-radius: 3px; background: #fff; color: #28343e; }
+    .control, .field select, .field input:not([type="checkbox"]) { height: 30px; padding: 0 8px; }
+    .field input[disabled] { background: #f3f5f7; color: #74808b; }
+    .field textarea { min-height: 76px; padding: 7px 8px; resize: vertical; }
+    .checkbox-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-height: 30px; }
+    .checkbox-line label { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .role-grid { display: grid; grid-template-columns: repeat(5, minmax(100px, 1fr)); gap: 7px 14px; align-content: start; min-height: 0; }
+    input[type="checkbox"] { width: auto; height: auto; accent-color: var(--blue); }
+    .section-title { margin: 14px 0 6px; font-size: 14px; font-weight: 600; color: #374652; }
+    .contact-box { border: 1px solid #d6dfe7; border-radius: 4px; overflow: hidden; }
+    .contact-head, .contact-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(120px, 1fr) minmax(140px, 1fr) 70px; gap: 0; }
+    .contact-head { background: #f2f5f8; color: #52606d; font-weight: 600; }
+    .contact-head > div, .contact-row > div { padding: 6px 8px; border-right: 1px solid #d6dfe7; border-bottom: 1px solid #d6dfe7; }
+    .contact-head > div:last-child, .contact-row > div:last-child { border-right: 0; }
+    .contact-row:last-child > div { border-bottom: 0; }
+    .contact-row input { width: 100%; height: 28px; padding: 0 7px; border: 1px solid #d3dce5; border-radius: 3px; }
+    .contact-row.invalid input:invalid { border-color: var(--danger); box-shadow: 0 0 0 1px rgba(227,75,85,.1); }
+    .row-actions { display: flex; align-items: center; justify-content: center; gap: 9px; }
+    .icon-btn { width: 27px; height: 27px; border: 0; border-radius: 3px; color: #fff; font-size: 17px; line-height: 1; }
+    .icon-btn.add { background: var(--blue); }
+    .icon-btn.remove { background: #9aa7b3; }
+    .icon-btn.remove:hover { background: var(--danger); }
+    .contact-note { margin-top: 7px; font-size: 12px; color: #77838e; }
+    .service-tools { display: flex; gap: 7px; margin-bottom: 6px; }
+    .service-tools button { min-width: 60px; height: 29px; border: 0; border-radius: 3px; color: #fff; background: var(--blue); }
+    .service-tools .delete { background: #e76368; }
+    .service-table { border: 1px solid #d6dfe7; height: 108px; overflow: auto; }
+    .service-table table { min-width: 680px; }
+    .service-table th, .service-table td { height: 35px; font-size: 12px; }
+    .empty { height: 75px; text-align: center; color: #6e7b86; vertical-align: middle; }
+    .upload { width: 64px; height: 30px; padding: 0 10px; border: 0; border-radius: 3px; background: var(--blue); color: #fff; justify-self: start; }
+    .counter { display: flex; justify-content: flex-end; margin-top: -22px; color: #7b8791; pointer-events: none; }
+    .error { display: none; grid-column: 2; color: var(--danger); font-size: 12px; margin-top: -8px; }
+    .has-error .error { display: block; }
+    .modal-foot { display: flex; justify-content: center; gap: 8px; padding: 9px 17px 10px; border-top: 1px solid #e0e5ea; }
+    .modal-foot button { min-width: 68px; height: 32px; border-radius: 3px; }
+    .modal-foot .cancel { color: var(--blue); border: 1px solid var(--blue); background: #e9f8ff; }
+    .toast { position: fixed; z-index: 30; top: 78px; left: 50%; transform: translateX(-50%) translateY(-12px); opacity: 0; pointer-events: none; padding: 11px 18px; border-radius: 4px; background: rgba(30, 42, 51, .93); color: #fff; transition: all .22s ease; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 1300px) {
+      .topbar { gap: 9px; padding-right: 10px; }
+      .top-item b { margin-left: 4px; }
+      .top-select { min-width: 96px; }
+      .form-grid { column-gap: 18px; }
+      .role-grid { grid-template-columns: repeat(5, minmax(86px, 1fr)); gap: 5px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-mark">C</div>
+      <div class="top-item">平台ID:<b>P22216</b></div>
+      <div class="top-item">用户:<b>王江哲</b></div>
+      <select class="top-select" aria-label="公司"><option>HC</option></select>
+      <select class="top-select" aria-label="部门"><option>杭州市场部</option></select>
+      <span class="top-icon" title="消息">♧</span><span class="top-icon" title="语言">A文</span><span class="top-icon" title="应用">▦</span>
+    </header>
+    <nav class="side-nav" aria-label="主导航">
+      <button class="active" title="合作伙伴">▱</button><button title="单据">▤</button><button title="用户">♙</button><button title="设置">⚒</button><button title="财务">♧</button><button title="运输">▣</button><button title="业务">▰</button><button title="统计">⌁</button><button title="系统">▤</button>
+    </nav>
+    <main class="main">
+      <div class="tabs"><div class="tab">首页</div><div class="tab">开票 <span class="close">×</span></div><div class="tab">海运订舱 <span class="close">×</span></div><div class="tab active">合作伙伴 <span class="close">×</span></div></div>
+      <div class="toolbar">
+        <button class="primary" aria-label="折叠菜单">⌄</button><input class="search" placeholder="快捷检索:合作伙伴/简称" aria-label="快捷搜索" /><button class="primary">查询</button>
+        <button class="primary">服务人员⌄</button><button class="primary">模板下载</button><button class="primary">导入</button><button class="primary">下载导入结果</button><button class="primary">更新客商数据</button><button class="primary">批量维护信控</button><button class="primary">批量黑名单设置</button><button class="primary">默认信控</button>
+        <button class="primary" id="open-customer">新增客户申请</button><button class="primary" id="open-supplier">新增供应商申请</button>
+      </div>
+      <section class="table-wrap">
+        <table aria-label="合作伙伴列表"><thead><tr><th style="width:90px">□ 编号</th><th>简称</th><th>代码</th><th>国家(地区)</th><th>中文名称</th><th>英文名称</th><th>客户合同状态</th><th>附加说明</th></tr></thead>
+          <tbody>
+            <tr><td>□ &nbsp;516</td><td>叶老六01</td><td>THYLL01</td><td>中国</td><td>测试全角色</td><td>yelaoliu01</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;518</td><td>测试车队</td><td>KHCSD1</td><td>中国</td><td>测试车队</td><td>测试车队</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;3169</td><td>合肥坤成</td><td>KHHFKC1</td><td>中国</td><td>合肥坤成进出口贸易有限公司</td><td>合肥坤成进出口贸易有限公司</td><td>未签约</td><td>此客户没量</td></tr>
+            <tr><td>□ &nbsp;3294</td><td>中国人保杭州</td><td>BXZGR01</td><td>中国</td><td>中国人民财产保险股份有限公司</td><td>中国人民财产保险股份有限公司</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;3459</td><td>上港独山</td><td>CDSG001</td><td>中国</td><td>上港集团平湖独山港码头有限公司</td><td>上港集团平湖独山港码头有限公司</td><td>未签约</td><td>问过没有联系</td></tr>
+            <tr><td>□ &nbsp;4106</td><td>专项拓展资金</td><td>ZX TZZJ</td><td>中国</td><td>专项拓展资金</td><td>专项拓展资金</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;4443</td><td>海创运联</td><td>ZJHCYLWL</td><td>中国</td><td>浙江海创运联网络科技有限公司</td><td>浙江海创运联网络科技有限公司</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;4444</td><td>海创国际</td><td>ZJHCGJHY</td><td>中国</td><td>浙江海创国际货运代理有限公司</td><td>浙江海创国际货运代理有限公司</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;4747</td><td>CT TNHH CHENXIN COMPREHE...</td><td>CT TNHH</td><td>中国</td><td>CT TNHH CHENXIN COMPREHE...</td><td>CT TNHH CHENXIN COMPREHE...</td><td>未签约</td><td></td></tr>
+            <tr class="selected"><td>□ &nbsp;4750</td><td>传盛国际</td><td>THCSGJ00001</td><td>中国</td><td>上海传盛国际货运有限公司</td><td>上海传盛国际货运有限公司</td><td>未签约</td><td></td></tr>
+            <tr><td>□ &nbsp;4751</td><td>无限矿业集团</td><td>THWXXY1</td><td></td><td>哇咔咔无限矿业集团</td><td>wakaka</td><td>未签约</td><td></td></tr>
+          </tbody>
+        </table><div class="fake-scroll"></div>
+      </section>
+      <div class="pager"><span>共 13 条</span><span class="page-box">20&nbsp; 条/页</span><span class="page-box">‹</span><span class="page-box current">1</span><span class="page-box">›</span><span class="spacer"></span><span>前往</span><span class="page-box">1</span><span>页</span></div>
+    </main>
+  </div>
+
+  <div class="overlay" id="customer-overlay" role="dialog" aria-modal="true" aria-labelledby="customer-title">
+    <form class="modal" id="customer-form" novalidate>
+      <div class="modal-head"><h2 id="customer-title">新增客户申请</h2><button type="button" class="close-modal" data-close="customer-overlay" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>代码</label><input class="control" disabled placeholder="系统生成" /></div><div class="field"><label class="required">国内/境外</label><select required><option value="">请选择</option><option>国内</option><option>境外</option></select></div>
+          <div class="field"><label class="required">中文名称</label><input required /></div><div class="field"><label class="required">简称</label><input required /></div>
+          <div class="field"><label class="required">英文名称</label><input required /></div><div class="field"><label class="required">含海外仓</label><select required><option value="">请选择</option><option>是</option><option>否</option></select></div>
+          <div class="field"><label class="required">是否同行</label><select required><option value="">请选择</option><option>是</option><option>否</option></select></div><div class="field"><label class="required">客户级别</label><select required><option value="">请选择</option><option>S类</option><option>A类</option><option>B类</option></select></div>
+          <div class="field"><label class="required">地址</label><input required /></div><div class="field"><label class="required">贸易类型</label><input required placeholder="请输入关键词" /></div>
+          <div class="field"><label>账期</label><select><option>票结</option><option>月结</option></select></div><div class="field"><label>额度</label><input type="number" min="0" value="0" /></div>
+          <div class="field"><label class="required">签订合同</label><select required><option value="">请选择</option><option>是</option><option>否</option></select></div><div class="field"><label class="required">最迟签订合同日期</label><input required type="date" /></div>
+          <div class="field full"><label>角色</label><div class="checkbox-line"><label><input type="checkbox" checked /> 客户</label></div></div>
+          <div class="field full"><label class="required">相关业务类型</label><div class="checkbox-line"><label><input type="checkbox" />海运出口</label><label><input type="checkbox" />海运进口</label><label><input type="checkbox" />空运出口</label><label><input type="checkbox" />空运进口</label><label><input type="checkbox" />铁路业务</label><label><input type="checkbox" />综合物流</label></div></div>
+        </div>
+        <div class="section-title required">联系人信息</div>
+        <div class="contact-box" data-contact-list="customer"><div class="contact-head"><div>联系人</div><div>角色</div><div>联系电话</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <div class="section-title">合作伙伴对应的服务人员</div>
+        <div class="service-tools"><button type="button">新增</button><button type="button">编辑</button><button type="button" class="delete">删除</button></div>
+        <div class="service-table"><table><thead><tr><th>岗位类型</th><th>业务类型</th><th>用户</th><th>是否默认</th><th>备注</th></tr></thead><tbody><tr><td class="empty" colspan="5">无查询结果</td></tr></tbody></table></div>
+        <div class="form-grid" style="margin-top:18px">
+          <div class="field"><label class="required">信控额度自测表</label><button type="button" class="upload">上传</button></div><div></div>
+          <div class="field"><label class="required">客户档案</label><button type="button" class="upload">上传</button></div><div></div>
+          <div class="field"><label class="required">客户托书</label><button type="button" class="upload">上传</button></div><div></div>
+          <div class="field full"><label>申请原因</label><div><textarea maxlength="500"></textarea><div class="counter">0/500</div></div></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button type="submit" class="primary">提交</button><button type="button" class="cancel" data-close="customer-overlay">取消</button></div>
+    </form>
+  </div>
+
+  <div class="overlay" id="supplier-overlay" role="dialog" aria-modal="true" aria-labelledby="supplier-title">
+    <form class="modal" id="supplier-form" novalidate>
+      <div class="modal-head"><h2 id="supplier-title">新增供应商申请</h2><button type="button" class="close-modal" data-close="supplier-overlay" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>代码</label><input class="control" disabled placeholder="系统生成" /></div><div class="field"><label class="required">国内/境外</label><select required><option value="">请选择</option><option>国内</option><option>境外</option></select></div>
+          <div class="field"><label class="required">中文名称</label><input required /></div><div class="field"><label class="required">简称</label><input required /></div>
+          <div class="field"><label class="required">英文名称</label><input required /></div><div class="field"><label class="required">是否同行</label><select required><option value="">请选择</option><option>是</option><option>否</option></select></div>
+          <div class="field"><label class="required">有无合同</label><select required><option value="">请选择</option><option>有合同</option><option>无合同</option></select></div><div class="field"><label>地址</label><input /></div>
+          <div class="field full"><label>角色</label><div class="checkbox-line role-grid"><label><input type="checkbox" />订舱代理/换单代理</label><label><input type="checkbox" />船代</label><label><input type="checkbox" />目的港代理</label><label><input type="checkbox" />指定货代</label><label><input type="checkbox" />本地代理</label><label><input type="checkbox" />结算代理</label><label><input type="checkbox" />船公司</label><label><input type="checkbox" />航空公司</label><label><input type="checkbox" />清关行</label><label><input type="checkbox" />仓库</label><label><input type="checkbox" />卡车公司</label><label><input type="checkbox" />发货人</label><label><input type="checkbox" />收货人</label><label><input type="checkbox" />通知人</label><label><input type="checkbox" />口岸代理</label><label><input type="checkbox" />发运代理</label><label><input type="checkbox" />装货地公司</label><label><input type="checkbox" />签单地公司</label><label><input type="checkbox" />码头公司</label><label><input type="checkbox" />卸货港公司</label><label><input type="checkbox" />目的港公司</label><label><input type="checkbox" />贸易商</label><label><input type="checkbox" />工厂/生产商</label><label><input type="checkbox" />其他</label></div></div>
+          <div class="field full"><label class="required">相关业务类型</label><div class="checkbox-line"><label><input type="checkbox" />海运出口</label><label><input type="checkbox" />海运进口</label><label><input type="checkbox" />空运出口</label><label><input type="checkbox" />空运进口</label><label><input type="checkbox" />铁路业务</label></div></div>
+        </div>
+        <div class="section-title required">联系人信息</div>
+        <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>角色</div><div>联系电话</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <div class="form-grid" style="margin-top:18px">
+          <div class="field"><label class="required">供应商档案</label><button type="button" class="upload">上传</button></div><div></div>
+          <div class="field full"><label class="required">审批内容简述</label><div><textarea maxlength="500" required></textarea><div class="counter">0/500</div></div></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button type="submit" class="primary">提交</button><button type="button" class="cancel" data-close="supplier-overlay">取消</button></div>
+    </form>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (() => {
+      const toast = document.getElementById('toast');
+      let toastTimer;
+      function showToast(message) {
+        toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2300);
+      }
+      function makeContactRow() {
+        const row = document.createElement('div'); row.className = 'contact-row';
+        row.innerHTML = '<div><input name="contactName" required aria-label="联系人" placeholder="请输入联系人" /></div>' +
+          '<div><input name="contactRole" aria-label="角色" placeholder="请输入角色" /></div>' +
+          '<div><input name="contactPhone" required aria-label="联系电话" placeholder="请输入联系电话" /></div>' +
+          '<div class="row-actions"><button type="button" class="icon-btn add" title="新增一行" aria-label="新增一行">＋</button><button type="button" class="icon-btn remove" title="删除当前行" aria-label="删除当前行">−</button></div>';
+        return row;
+      }
+      function addRow(list, sourceRow) {
+        const row = makeContactRow();
+        if (sourceRow) sourceRow.after(row); else list.appendChild(row);
+        row.querySelector('input').focus();
+      }
+      function setupContacts() {
+        document.querySelectorAll('[data-contact-list]').forEach(box => {
+          const list = box.querySelector('.contact-rows'); addRow(list);
+          box.addEventListener('click', event => {
+            const add = event.target.closest('.add'); const remove = event.target.closest('.remove'); const row = event.target.closest('.contact-row');
+            if (add) addRow(list, row);
+            if (remove) {
+              if (list.children.length === 1) { showToast('至少保留一条联系人信息'); return; }
+              row.remove();
+            }
+          });
+        });
+      }
+      function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+      document.getElementById('open-customer').addEventListener('click', () => openModal('customer-overlay'));
+      document.getElementById('open-supplier').addEventListener('click', () => openModal('supplier-overlay'));
+      document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => closeModal(button.dataset.close)));
+      document.querySelectorAll('.overlay').forEach(overlay => overlay.addEventListener('click', event => { if (event.target === overlay) closeModal(overlay.id); }));
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(o => closeModal(o.id)); });
+      document.querySelectorAll('textarea').forEach(area => area.addEventListener('input', () => { const counter = area.parentElement.querySelector('.counter'); if (counter) counter.textContent = `${area.value.length}/500`; }));
+      function validate(form) {
+        let ok = true; form.querySelectorAll('[required]').forEach(input => { if (!input.value.trim()) { ok = false; input.closest('.field, .contact-row')?.classList.add('has-error'); input.focus(); } else input.closest('.field, .contact-row')?.classList.remove('has-error'); });
+        const rows = form.querySelectorAll('.contact-row');
+        rows.forEach(row => { const name = row.querySelector('[name="contactName"]'); const phone = row.querySelector('[name="contactPhone"]'); const invalid = !name.value.trim() || !phone.value.trim(); row.classList.toggle('invalid', invalid); if (invalid) ok = false; });
+        if (!ok) showToast('请补充必填信息后再提交');
+        return ok;
+      }
+      document.querySelectorAll('form.modal').forEach(form => form.addEventListener('submit', event => { event.preventDefault(); if (!validate(form)) return; showToast('申请已提交（原型演示）'); closeModal(form.closest('.overlay').id); }));
+      setupContacts();
+    })();
+  </script>
+</body>
+</html>
