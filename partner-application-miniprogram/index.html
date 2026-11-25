@@ -63,15 +63,21 @@
     .select-wrap { position: relative; }
     .select-wrap::after { content: "›"; position: absolute; right: 18px; top: 8px; transform: rotate(90deg); color: #8b9399; font-size: 27px; pointer-events: none; }
     .select-wrap select { appearance: none; padding-right: 45px; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+    .two-col { display: block; }
     .two-col .field { min-width: 0; }
     .check-group { margin: 1px 0 20px; }
     .check-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px 12px; }
     .check-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .scroll-multi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; max-height: 154px; overflow-y: auto; padding: 9px; border: 1px solid var(--line); border-radius: 6px; background: #f7fafc; }
+    .scroll-multi .check-label { min-height: 36px; padding: 7px 8px; border-radius: 5px; background: #fff; }
+    .multi-picker-trigger { width: 100%; min-height: 46px; padding: 0 42px 0 13px; border: 0; border-radius: 5px; color: #64717a; background: var(--control-bg); text-align: left; position: relative; }
+    .multi-picker-trigger::after { content: "›"; position: absolute; right: 17px; top: 8px; transform: rotate(90deg); color: #8b9399; font-size: 27px; }
+    .multi-picker-trigger.has-value { color: #3c454d; }
+    .picker-source { display: none; }
     .check-label { display: flex; align-items: center; gap: 7px; color: #46515a; font-size: 14px; }
     .check-label input { width: 18px; height: 18px; margin: 0; accent-color: var(--wx-blue); }
-    .contact-box { overflow: hidden; border: 1px solid var(--line); border-radius: 5px; }
-    .contact-head, .contact-row { display: grid; grid-template-columns: 1fr 1fr 1.16fr 56px; align-items: center; }
+    .contact-box { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; }
+    .contact-head, .contact-row { display: grid; grid-template-columns: 1fr 1.1fr 1.1fr 58px; min-width: 520px; align-items: center; }
     .contact-head { color: #53616d; background: #f0f4f7; font-size: 14px; font-weight: 600; }
     .contact-head > div, .contact-row > div { min-width: 0; padding: 8px 7px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .contact-head > div:last-child, .contact-row > div:last-child { border-right: 0; }
@@ -103,6 +109,21 @@
     .toast { position: fixed; z-index: 40; left: 50%; bottom: 94px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; max-width: calc(100% - 40px); padding: 10px 16px; border-radius: 6px; color: #fff; background: rgba(33, 44, 52, .92); transition: all .2s ease; text-align: center; }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .invalid-field { box-shadow: 0 0 0 2px rgba(217,93,101,.35) !important; }
+    .dialog-backdrop { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(25, 39, 50, .46); }
+    .dialog-backdrop.open { display: flex; }
+    .dialog { width: min(330px, calc(100vw - 48px)); padding: 24px 20px 18px; border-radius: 12px; background: #fff; box-shadow: 0 16px 42px rgba(20, 42, 62, .22); text-align: center; }
+    .dialog-title { margin-bottom: 10px; font-size: 20px; font-weight: 700; color: #26343d; }
+    .dialog-message { margin: 0 0 20px; color: #5f6d77; line-height: 1.7; }
+    .dialog-confirm { width: 100%; height: 42px; border-radius: 22px; color: #fff; background: var(--wx-blue); font-size: 16px; font-weight: 600; }
+    .sheet-backdrop { position: fixed; inset: 0; z-index: 60; display: none; align-items: flex-end; background: rgba(25, 39, 50, .42); }
+    .sheet-backdrop.open { display: flex; }
+    .multi-sheet { width: min(100%, 640px); max-height: 78vh; margin: 0 auto; padding-bottom: env(safe-area-inset-bottom); border-radius: 16px 16px 0 0; background: #fff; box-shadow: 0 -10px 32px rgba(24, 53, 75, .22); }
+    .sheet-header { height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #e3e9ed; }
+    .sheet-header button { padding: 6px 4px; color: var(--wx-blue-dark); background: transparent; font-size: 15px; }
+    .sheet-header strong { font-size: 17px; }
+    .sheet-list { max-height: 58vh; overflow-y: auto; padding: 12px 16px 18px; }
+    .sheet-option { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 8px 10px; border-bottom: 1px solid #edf1f3; color: #46515a; }
+    .sheet-option input { width: 19px; height: 19px; accent-color: var(--wx-blue); }
     @media (max-width: 520px) {
       .home-body { padding: 48px 15px 102px; }
       .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
@@ -113,12 +134,11 @@
       .form-card { padding: 17px 10px 20px; }
       .section-title { margin-bottom: 18px; font-size: 21px; }
       .section-title::before { height: 31px; }
-      .two-col { display: block; }
       .field label, .group-label { font-size: 16px; }
-      .check-grid { gap: 11px 7px; }
+      .scroll-multi { gap: 6px; max-height: 150px; padding: 8px; }
       .check-label { gap: 5px; font-size: 13px; }
       .check-label input { width: 16px; height: 16px; }
-      .contact-head, .contact-row { grid-template-columns: .95fr .9fr 1.2fr 52px; }
+      .contact-head, .contact-row { grid-template-columns: 1fr 1.1fr 1.1fr 52px; min-width: 520px; }
       .contact-head > div, .contact-row > div { padding-left: 5px; padding-right: 5px; }
       .contact-row input { font-size: 11px; padding: 0 5px; }
       .row-icon { width: 24px; height: 26px; font-size: 17px; }
@@ -148,7 +168,6 @@
       <main class="form-scroll"><form class="form-card" id="customer-form">
         <h1 class="section-title">基础信息</h1>
         <div class="two-col">
-          <div class="field"><label>代码</label><input class="control" disabled placeholder="系统生成" /></div>
           <div class="field"><label class="required">国内/境外</label><div class="select-wrap"><select required><option value="">请选择</option><option>国内</option><option>境外</option></select></div></div>
           <div class="field"><label class="required">中文名称</label><input required placeholder="请输入中文名称" /></div>
           <div class="field"><label class="required">简称</label><input required placeholder="请输入简称" /></div>
@@ -164,10 +183,10 @@
           <div class="field"><label class="required">最迟签订合同日期</label><input type="date" required /></div>
         </div>
         <div class="check-group"><div class="group-label">角色</div><label class="check-label"><input type="checkbox" checked />客户</label></div>
-        <div class="check-group" data-required-group><div class="group-label required">相关业务类型</div><div class="check-grid"><label class="check-label"><input type="checkbox" />海运出口</label><label class="check-label"><input type="checkbox" />海运进口</label><label class="check-label"><input type="checkbox" />空运出口</label><label class="check-label"><input type="checkbox" />空运进口</label><label class="check-label"><input type="checkbox" />铁路业务</label><label class="check-label"><input type="checkbox" />综合物流</label></div></div>
+        <div class="check-group" data-required-group data-picker-group="customer-business"><div class="group-label required">相关业务类型</div><button type="button" class="multi-picker-trigger" data-picker-trigger="customer-business">请选择相关业务类型</button><div class="picker-source"><label class="check-label"><input type="checkbox" value="海运出口" />海运出口</label><label class="check-label"><input type="checkbox" value="海运进口" />海运进口</label><label class="check-label"><input type="checkbox" value="空运出口" />空运出口</label><label class="check-label"><input type="checkbox" value="空运进口" />空运进口</label><label class="check-label"><input type="checkbox" value="铁路业务" />铁路业务</label><label class="check-label"><input type="checkbox" value="综合物流" />综合物流</label></div></div>
 
-        <h2 class="section-title compact required">联系人信息</h2>
-        <div class="contact-box" data-contact-list="customer"><div class="contact-head"><div>联系人</div><div>角色</div><div>联系电话</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <h2 class="section-title compact required">客户联系人信息</h2>
+        <div class="contact-box" data-contact-list="customer"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
 
         <h2 class="section-title compact">合作伙伴对应的服务人员</h2>
         <div class="service-tools"><button type="button">新增</button><button type="button">编辑</button><button type="button" class="danger">删除</button></div>
@@ -187,7 +206,6 @@
       <main class="form-scroll"><form class="form-card" id="supplier-form">
         <h1 class="section-title">基础信息</h1>
         <div class="two-col">
-          <div class="field"><label>代码</label><input class="control" disabled placeholder="系统生成" /></div>
           <div class="field"><label class="required">国内/境外</label><div class="select-wrap"><select required><option value="">请选择</option><option>国内</option><option>境外</option></select></div></div>
           <div class="field"><label class="required">中文名称</label><input required placeholder="请输入中文名称" /></div>
           <div class="field"><label class="required">简称</label><input required placeholder="请输入简称" /></div>
@@ -196,11 +214,11 @@
           <div class="field"><label class="required">有无合同</label><div class="select-wrap"><select required><option value="">请选择</option><option>有合同</option><option>无合同</option></select></div></div>
           <div class="field"><label>地址</label><input placeholder="请输入地址" /></div>
         </div>
-        <div class="check-group"><div class="group-label">角色</div><div class="check-grid two"><label class="check-label"><input type="checkbox" />订舱代理/换单代理</label><label class="check-label"><input type="checkbox" />船代</label><label class="check-label"><input type="checkbox" />目的港代理</label><label class="check-label"><input type="checkbox" />指定货代</label><label class="check-label"><input type="checkbox" />本地代理</label><label class="check-label"><input type="checkbox" />结算代理</label><label class="check-label"><input type="checkbox" />船公司</label><label class="check-label"><input type="checkbox" />航空公司</label><label class="check-label"><input type="checkbox" />清关行</label><label class="check-label"><input type="checkbox" />仓库</label><label class="check-label"><input type="checkbox" />卡车公司</label><label class="check-label"><input type="checkbox" />发货人</label><label class="check-label"><input type="checkbox" />收货人</label><label class="check-label"><input type="checkbox" />通知人</label><label class="check-label"><input type="checkbox" />口岸代理</label><label class="check-label"><input type="checkbox" />发运代理</label><label class="check-label"><input type="checkbox" />装货地公司</label><label class="check-label"><input type="checkbox" />签单地公司</label><label class="check-label"><input type="checkbox" />码头公司</label><label class="check-label"><input type="checkbox" />卸货港公司</label><label class="check-label"><input type="checkbox" />目的港公司</label><label class="check-label"><input type="checkbox" />贸易商</label><label class="check-label"><input type="checkbox" />工厂/生产商</label><label class="check-label"><input type="checkbox" />其他</label></div></div>
-        <div class="check-group" data-required-group><div class="group-label required">相关业务类型</div><div class="check-grid"><label class="check-label"><input type="checkbox" />海运出口</label><label class="check-label"><input type="checkbox" />海运进口</label><label class="check-label"><input type="checkbox" />空运出口</label><label class="check-label"><input type="checkbox" />空运进口</label><label class="check-label"><input type="checkbox" />铁路业务</label></div></div>
+        <div class="check-group" data-picker-group="supplier-role"><div class="group-label">角色</div><button type="button" class="multi-picker-trigger" data-picker-trigger="supplier-role">请选择角色</button><div class="picker-source"><label class="check-label"><input type="checkbox" value="订舱代理/换单代理" />订舱代理/换单代理</label><label class="check-label"><input type="checkbox" value="船代" />船代</label><label class="check-label"><input type="checkbox" value="目的港代理" />目的港代理</label><label class="check-label"><input type="checkbox" value="指定货代" />指定货代</label><label class="check-label"><input type="checkbox" value="本地代理" />本地代理</label><label class="check-label"><input type="checkbox" value="结算代理" />结算代理</label><label class="check-label"><input type="checkbox" value="船公司" />船公司</label><label class="check-label"><input type="checkbox" value="航空公司" />航空公司</label><label class="check-label"><input type="checkbox" value="清关行" />清关行</label><label class="check-label"><input type="checkbox" value="仓库" />仓库</label><label class="check-label"><input type="checkbox" value="卡车公司" />卡车公司</label><label class="check-label"><input type="checkbox" value="发货人" />发货人</label><label class="check-label"><input type="checkbox" value="收货人" />收货人</label><label class="check-label"><input type="checkbox" value="通知人" />通知人</label><label class="check-label"><input type="checkbox" value="口岸代理" />口岸代理</label><label class="check-label"><input type="checkbox" value="发运代理" />发运代理</label><label class="check-label"><input type="checkbox" value="装货地公司" />装货地公司</label><label class="check-label"><input type="checkbox" value="签单地公司" />签单地公司</label><label class="check-label"><input type="checkbox" value="码头公司" />码头公司</label><label class="check-label"><input type="checkbox" value="卸货港公司" />卸货港公司</label><label class="check-label"><input type="checkbox" value="目的港公司" />目的港公司</label><label class="check-label"><input type="checkbox" value="贸易商" />贸易商</label><label class="check-label"><input type="checkbox" value="工厂/生产商" />工厂/生产商</label><label class="check-label"><input type="checkbox" value="其他" />其他</label></div></div>
+        <div class="check-group" data-required-group data-picker-group="supplier-business"><div class="group-label required">相关业务类型</div><button type="button" class="multi-picker-trigger" data-picker-trigger="supplier-business">请选择相关业务类型</button><div class="picker-source"><label class="check-label"><input type="checkbox" value="海运出口" />海运出口</label><label class="check-label"><input type="checkbox" value="海运进口" />海运进口</label><label class="check-label"><input type="checkbox" value="空运出口" />空运出口</label><label class="check-label"><input type="checkbox" value="空运进口" />空运进口</label><label class="check-label"><input type="checkbox" value="铁路业务" />铁路业务</label></div></div>
 
-        <h2 class="section-title compact required">联系人信息</h2>
-        <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>角色</div><div>联系电话</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <h2 class="section-title compact">供应商联系人信息</h2>
+        <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
 
         <h2 class="section-title compact">申请资料</h2>
         <div class="upload-row"><label class="required">供应商档案</label><button type="button" class="upload-btn">上传</button></div>
@@ -210,6 +228,12 @@
     </section>
   </div>
   <div class="toast" id="toast" role="status"></div>
+  <div class="dialog-backdrop" id="success-dialog" role="dialog" aria-modal="true" aria-labelledby="success-title">
+    <div class="dialog"><div class="dialog-title" id="success-title">提交成功</div><p class="dialog-message">申请已提交，后续请至企微查看审批流程。</p><button type="button" class="dialog-confirm" id="success-confirm">我知道了</button></div>
+  </div>
+  <div class="sheet-backdrop" id="multi-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="multi-sheet"><div class="sheet-header"><button type="button" id="sheet-cancel">取消</button><strong id="sheet-title">请选择</strong><button type="button" id="sheet-confirm">完成</button></div><div class="sheet-list" id="sheet-list"></div></div>
+  </div>
   <script>
     (() => {
       const toast = document.getElementById('toast');
@@ -221,16 +245,17 @@
       function createContactRow() {
         const row = document.createElement('div'); row.className = 'contact-row';
         row.innerHTML = '<div><input name="contactName" required placeholder="请输入联系人" aria-label="联系人" /></div>' +
-          '<div><input name="contactRole" placeholder="请输入角色" aria-label="角色" /></div>' +
           '<div><input name="contactPhone" required placeholder="请输入联系电话" aria-label="联系电话" /></div>' +
+          '<div><input name="contactEmail" type="email" placeholder="请输入联系邮箱" aria-label="联系邮箱" /></div>' +
           '<div class="contact-actions"><button type="button" class="row-icon add" title="新增一行" aria-label="新增一行">＋</button><button type="button" class="row-icon remove" title="删除当前行" aria-label="删除当前行">−</button></div>';
         return row;
       }
       document.querySelectorAll('[data-contact-list]').forEach(box => {
-        const list = box.querySelector('.contact-rows'); list.appendChild(createContactRow());
+        const list = box.querySelector('.contact-rows'); const optional = box.dataset.contactList === 'supplier';
+        const firstRow = createContactRow(); if (optional) firstRow.querySelectorAll('[required]').forEach(input => input.removeAttribute('required')); list.appendChild(firstRow);
         box.addEventListener('click', event => {
           const row = event.target.closest('.contact-row');
-          if (event.target.closest('.add')) { const next = createContactRow(); row.after(next); next.querySelector('input').focus(); }
+          if (event.target.closest('.add')) { const next = createContactRow(); if (optional) next.querySelectorAll('[required]').forEach(input => input.removeAttribute('required')); row.after(next); next.querySelector('input').focus(); }
           if (event.target.closest('.remove')) {
             if (list.children.length === 1) { showToast('至少保留一条联系人信息'); return; }
             row.remove();
@@ -244,6 +269,52 @@
       document.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.open)));
       document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.back)));
       document.querySelectorAll('textarea').forEach(area => area.addEventListener('input', () => { const counter = area.parentElement.querySelector('.counter'); if (counter) counter.textContent = `${area.value.length}/500`; }));
+      const sheet = document.getElementById('multi-sheet');
+      const sheetList = document.getElementById('sheet-list');
+      const sheetTitle = document.getElementById('sheet-title');
+      let activePicker = null;
+      let initialPickerValues = [];
+      function updatePickerTrigger(group) {
+        const sourceInputs = [...group.querySelectorAll('.picker-source input[type="checkbox"]')];
+        const selected = sourceInputs.filter(input => input.checked).map(input => input.value);
+        const trigger = group.querySelector('.multi-picker-trigger');
+        trigger.textContent = selected.length ? selected.join('、') : trigger.dataset.placeholder;
+        trigger.classList.toggle('has-value', selected.length > 0);
+      }
+      function closePicker(restore) {
+        if (!activePicker) return;
+        const inputs = [...activePicker.querySelectorAll('.picker-source input[type="checkbox"]')];
+        if (restore) inputs.forEach((input, index) => { input.checked = initialPickerValues[index]; });
+        updatePickerTrigger(activePicker);
+        activePicker = null; sheet.classList.remove('open');
+      }
+      function openPicker(group) {
+        activePicker = group;
+        const sourceLabels = [...group.querySelectorAll('.picker-source label')];
+        const sourceInputs = sourceLabels.map(label => label.querySelector('input[type="checkbox"]'));
+        initialPickerValues = sourceInputs.map(input => input.checked);
+        sheetTitle.textContent = group.querySelector('.group-label').textContent.replace('*', '').trim();
+        sheetList.innerHTML = '';
+        sourceLabels.forEach((label, index) => {
+          const sourceInput = sourceInputs[index];
+          const option = document.createElement('label'); option.className = 'sheet-option';
+          option.innerHTML = `<input type="checkbox" ${sourceInput.checked ? 'checked' : ''}><span>${label.textContent.trim()}</span>`;
+          option.querySelector('input').addEventListener('change', event => { sourceInput.checked = event.target.checked; });
+          sheetList.appendChild(option);
+        });
+        sheet.classList.add('open');
+      }
+      document.querySelectorAll('[data-picker-group]').forEach(group => {
+        const trigger = group.querySelector('[data-picker-trigger]'); trigger.dataset.placeholder = trigger.textContent.trim(); updatePickerTrigger(group);
+        trigger.addEventListener('click', () => openPicker(group));
+      });
+      document.getElementById('sheet-cancel').addEventListener('click', () => closePicker(true));
+      document.getElementById('sheet-confirm').addEventListener('click', () => closePicker(false));
+      sheet.addEventListener('click', event => { if (event.target === sheet) closePicker(true); });
+      const successDialog = document.getElementById('success-dialog');
+      document.getElementById('success-confirm').addEventListener('click', () => successDialog.classList.remove('open'));
+      successDialog.addEventListener('click', event => { if (event.target === successDialog) successDialog.classList.remove('open'); });
+      function showSuccessDialog() { successDialog.classList.add('open'); }
       function validate(form) {
         let valid = true; let firstInvalid = null;
         form.querySelectorAll('[required]').forEach(input => {
@@ -252,9 +323,12 @@
         });
         form.querySelectorAll('[data-required-group]').forEach(group => {
           const checked = group.querySelector('input[type="checkbox"]:checked'); group.classList.toggle('invalid-field', !checked);
+          group.querySelector('.multi-picker-trigger')?.classList.toggle('invalid-field', !checked);
           if (!checked) { valid = false; firstInvalid ||= group; }
         });
+        const supplierForm = form.id === 'supplier-form';
         form.querySelectorAll('.contact-row').forEach(row => {
+          if (supplierForm) { row.classList.remove('invalid'); return; }
           const name = row.querySelector('[name="contactName"]'); const phone = row.querySelector('[name="contactPhone"]'); const invalid = !name.value.trim() || !phone.value.trim();
           row.classList.toggle('invalid', invalid); if (invalid) { valid = false; firstInvalid ||= row; }
         });
@@ -262,7 +336,7 @@
         return valid;
       }
       document.querySelectorAll('[data-submit]').forEach(button => button.addEventListener('click', () => {
-        const form = document.getElementById(button.dataset.submit); if (!validate(form)) return; showToast('申请已提交（原型演示）');
+        const form = document.getElementById(button.dataset.submit); if (!validate(form)) return; showSuccessDialog();
       }));
     })();
   </script>
