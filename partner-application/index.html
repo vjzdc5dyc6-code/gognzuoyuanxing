@@ -234,7 +234,7 @@
           <div class="field full"><label>角色</label><div class="checkbox-line role-grid"><label><input type="checkbox" />订舱代理/换单代理</label><label><input type="checkbox" />船代</label><label><input type="checkbox" />目的港代理</label><label><input type="checkbox" />指定货代</label><label><input type="checkbox" />本地代理</label><label><input type="checkbox" />结算代理</label><label><input type="checkbox" />船公司</label><label><input type="checkbox" />航空公司</label><label><input type="checkbox" />清关行</label><label><input type="checkbox" />仓库</label><label><input type="checkbox" />卡车公司</label><label><input type="checkbox" />发货人</label><label><input type="checkbox" />收货人</label><label><input type="checkbox" />通知人</label><label><input type="checkbox" />口岸代理</label><label><input type="checkbox" />发运代理</label><label><input type="checkbox" />装货地公司</label><label><input type="checkbox" />签单地公司</label><label><input type="checkbox" />码头公司</label><label><input type="checkbox" />卸货港公司</label><label><input type="checkbox" />目的港公司</label><label><input type="checkbox" />贸易商</label><label><input type="checkbox" />工厂/生产商</label><label><input type="checkbox" />其他</label></div></div>
           <div class="field full"><label class="required">相关业务类型</label><div class="checkbox-line"><label><input type="checkbox" />海运出口</label><label><input type="checkbox" />海运进口</label><label><input type="checkbox" />空运出口</label><label><input type="checkbox" />空运进口</label><label><input type="checkbox" />铁路业务</label></div></div>
         </div>
-        <div class="section-title required">供应商联系人信息</div>
+        <div class="section-title">供应商联系人信息</div>
         <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
         <div class="form-grid" style="margin-top:18px">
           <div class="field"><label class="required">供应商档案</label><button type="button" class="upload">上传</button></div><div></div>
@@ -269,10 +269,11 @@
       }
       function setupContacts() {
         document.querySelectorAll('[data-contact-list]').forEach(box => {
-          const list = box.querySelector('.contact-rows'); addRow(list);
+          const list = box.querySelector('.contact-rows'); const optional = box.dataset.contactList === 'supplier'; addRow(list);
+          if (optional) list.querySelectorAll('[required]').forEach(input => input.removeAttribute('required'));
           box.addEventListener('click', event => {
             const add = event.target.closest('.add'); const remove = event.target.closest('.remove'); const row = event.target.closest('.contact-row');
-            if (add) addRow(list, row);
+            if (add) { addRow(list, row); if (optional) row.nextElementSibling.querySelectorAll('[required]').forEach(input => input.removeAttribute('required')); }
             if (remove) {
               if (list.children.length === 1) { showToast('至少保留一条联系人信息'); return; }
               row.remove();
@@ -291,7 +292,7 @@
       function validate(form) {
         let ok = true; form.querySelectorAll('[required]').forEach(input => { if (!input.value.trim()) { ok = false; input.closest('.field, .contact-row')?.classList.add('has-error'); input.focus(); } else input.closest('.field, .contact-row')?.classList.remove('has-error'); });
         const rows = form.querySelectorAll('.contact-row');
-        rows.forEach(row => { const name = row.querySelector('[name="contactName"]'); const phone = row.querySelector('[name="contactPhone"]'); const invalid = !name.value.trim() || !phone.value.trim(); row.classList.toggle('invalid', invalid); if (invalid) ok = false; });
+        if (form.id !== 'supplier-form') rows.forEach(row => { const name = row.querySelector('[name="contactName"]'); const phone = row.querySelector('[name="contactPhone"]'); const invalid = !name.value.trim() || !phone.value.trim(); row.classList.toggle('invalid', invalid); if (invalid) ok = false; });
         if (!ok) showToast('请补充必填信息后再提交');
         return ok;
       }
