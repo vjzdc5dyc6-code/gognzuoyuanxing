@@ -112,7 +112,7 @@
     input[type="checkbox"] { width: auto; height: auto; accent-color: var(--blue); }
     .section-title { margin: 14px 0 6px; font-size: 14px; font-weight: 600; color: #374652; }
     .contact-box { border: 1px solid #d6dfe7; border-radius: 4px; overflow: hidden; }
-    .contact-head, .contact-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(120px, 1fr) minmax(140px, 1fr) 70px; gap: 0; }
+    .contact-head, .contact-row { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(150px, 1.1fr) minmax(160px, 1.2fr) 70px; gap: 0; }
     .contact-head { background: #f2f5f8; color: #52606d; font-weight: 600; }
     .contact-head > div, .contact-row > div { padding: 6px 8px; border-right: 1px solid #d6dfe7; border-bottom: 1px solid #d6dfe7; }
     .contact-head > div:last-child, .contact-row > div:last-child { border-right: 0; }
@@ -206,8 +206,8 @@
           <div class="field full"><label>角色</label><div class="checkbox-line"><label><input type="checkbox" checked /> 客户</label></div></div>
           <div class="field full"><label class="required">相关业务类型</label><div class="checkbox-line"><label><input type="checkbox" />海运出口</label><label><input type="checkbox" />海运进口</label><label><input type="checkbox" />空运出口</label><label><input type="checkbox" />空运进口</label><label><input type="checkbox" />铁路业务</label><label><input type="checkbox" />综合物流</label></div></div>
         </div>
-        <div class="section-title required">联系人信息</div>
-        <div class="contact-box" data-contact-list="customer"><div class="contact-head"><div>联系人</div><div>角色</div><div>联系电话</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <div class="section-title required">客户联系人信息</div>
+        <div class="contact-box" data-contact-list="customer"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
         <div class="section-title">合作伙伴对应的服务人员</div>
         <div class="service-tools"><button type="button">新增</button><button type="button">编辑</button><button type="button" class="delete">删除</button></div>
         <div class="service-table"><table><thead><tr><th>岗位类型</th><th>业务类型</th><th>用户</th><th>是否默认</th><th>备注</th></tr></thead><tbody><tr><td class="empty" colspan="5">无查询结果</td></tr></tbody></table></div>
@@ -234,8 +234,8 @@
           <div class="field full"><label>角色</label><div class="checkbox-line role-grid"><label><input type="checkbox" />订舱代理/换单代理</label><label><input type="checkbox" />船代</label><label><input type="checkbox" />目的港代理</label><label><input type="checkbox" />指定货代</label><label><input type="checkbox" />本地代理</label><label><input type="checkbox" />结算代理</label><label><input type="checkbox" />船公司</label><label><input type="checkbox" />航空公司</label><label><input type="checkbox" />清关行</label><label><input type="checkbox" />仓库</label><label><input type="checkbox" />卡车公司</label><label><input type="checkbox" />发货人</label><label><input type="checkbox" />收货人</label><label><input type="checkbox" />通知人</label><label><input type="checkbox" />口岸代理</label><label><input type="checkbox" />发运代理</label><label><input type="checkbox" />装货地公司</label><label><input type="checkbox" />签单地公司</label><label><input type="checkbox" />码头公司</label><label><input type="checkbox" />卸货港公司</label><label><input type="checkbox" />目的港公司</label><label><input type="checkbox" />贸易商</label><label><input type="checkbox" />工厂/生产商</label><label><input type="checkbox" />其他</label></div></div>
           <div class="field full"><label class="required">相关业务类型</label><div class="checkbox-line"><label><input type="checkbox" />海运出口</label><label><input type="checkbox" />海运进口</label><label><input type="checkbox" />空运出口</label><label><input type="checkbox" />空运进口</label><label><input type="checkbox" />铁路业务</label></div></div>
         </div>
-        <div class="section-title required">联系人信息</div>
-        <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>角色</div><div>联系电话</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <div class="section-title required">供应商联系人信息</div>
+        <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
         <div class="form-grid" style="margin-top:18px">
           <div class="field"><label class="required">供应商档案</label><button type="button" class="upload">上传</button></div><div></div>
           <div class="field full"><label class="required">审批内容简述</label><div><textarea maxlength="500" required></textarea><div class="counter">0/500</div></div></div>
@@ -257,8 +257,8 @@
       function makeContactRow() {
         const row = document.createElement('div'); row.className = 'contact-row';
         row.innerHTML = '<div><input name="contactName" required aria-label="联系人" placeholder="请输入联系人" /></div>' +
-          '<div><input name="contactRole" aria-label="角色" placeholder="请输入角色" /></div>' +
           '<div><input name="contactPhone" required aria-label="联系电话" placeholder="请输入联系电话" /></div>' +
+          '<div><input name="contactEmail" type="email" aria-label="联系邮箱" placeholder="请输入联系邮箱" /></div>' +
           '<div class="row-actions"><button type="button" class="icon-btn add" title="新增一行" aria-label="新增一行">＋</button><button type="button" class="icon-btn remove" title="删除当前行" aria-label="删除当前行">−</button></div>';
         return row;
       }
