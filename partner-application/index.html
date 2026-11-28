@@ -114,8 +114,9 @@
     .type-picker.open .type-picker-menu { display: grid; gap: 5px; }
     .contact-box { overflow: visible; }
     .contact-type-picker.open { z-index: 20; }
-    .contact-type-picker .type-picker-menu { z-index: 1000; }
+    .contact-type-picker .type-picker-menu { z-index: 1000; width: 100%; }
     .type-picker-menu label { display: flex; align-items: center; gap: 6px; padding: 4px 6px; white-space: nowrap; }
+    .type-picker-menu input[type="checkbox"] { width: 14px; height: 14px; margin: 0; padding: 0; flex: none; }
     .supplier-only[hidden], .customer-only[hidden], .customer-business-only[hidden] { display: none; }
     .checkbox-line label { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
     .role-grid { display: grid; grid-template-columns: repeat(5, minmax(100px, 1fr)); gap: 7px 14px; align-content: start; min-height: 0; }
@@ -128,7 +129,7 @@
     .contact-head > div, .contact-row > div { padding: 6px 8px; border-right: 1px solid #d6dfe7; border-bottom: 1px solid #d6dfe7; }
     .contact-head > div:last-child, .contact-row > div:last-child { border-right: 0; }
     .contact-row:last-child > div { border-bottom: 0; }
-    .contact-row input { width: 100%; height: 28px; padding: 0 7px; border: 1px solid #d3dce5; border-radius: 3px; }
+    .contact-row input:not([type="checkbox"]) { width: 100%; height: 28px; padding: 0 7px; border: 1px solid #d3dce5; border-radius: 3px; }
     .contact-row.invalid input:invalid { border-color: var(--danger); box-shadow: 0 0 0 1px rgba(227,75,85,.1); }
     .row-actions { display: flex; align-items: center; justify-content: center; gap: 9px; }
     .icon-btn { width: 27px; height: 27px; border: 0; border-radius: 3px; color: #fff; font-size: 17px; line-height: 1; }
