@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>海创｜客商申请小程序原型</title>
   <style>
     :root {
@@ -17,6 +17,7 @@
       --danger: #d95d65;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     html, body { margin: 0; min-height: 100%; background: var(--page-bg); color: var(--text); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; }
     button, input, select, textarea { font: inherit; }
     button { border: 0; cursor: pointer; }
@@ -25,6 +26,7 @@
     .page.active { display: block; }
     .mp-header { position: sticky; top: 0; z-index: 20; min-height: calc(56px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 18px 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #118ff0 0%, #087fdf 100%); color: #fff; }
     .mp-title { font-size: 22px; font-weight: 600; letter-spacing: 1px; }
+    .form-page .mp-title { font-size: 18px; letter-spacing: 0; }
     .mp-actions { position: absolute; right: 16px; top: calc(env(safe-area-inset-top) + 12px); display: flex; align-items: center; gap: 13px; color: #fff; }
     .mini-menu { width: 76px; height: 36px; display: flex; align-items: center; justify-content: space-around; border: 1px solid rgba(255,255,255,.35); border-radius: 20px; background: rgba(2, 88, 172, .42); font-size: 17px; }
     .mini-menu .divide { width: 1px; height: 22px; background: rgba(255,255,255,.35); }
@@ -39,8 +41,7 @@
     .rate { background: linear-gradient(150deg, #45bee8, #178add); }
     .order { background: linear-gradient(150deg, #ff6713, #f13e5b); }
     .query { background: linear-gradient(150deg, #7de9bd, #1ab4d4); }
-    .customer { background: linear-gradient(150deg, #6ec5ff, #247fe0); }
-    .supplier { background: linear-gradient(150deg, #6d9eff, #6956d7); }
+    .partner { grid-column: 1 / -1; min-height: 112px; flex-direction: row; background: linear-gradient(150deg, #6ec5ff, #247fe0); }
     .home-footer { position: fixed; z-index: 10; bottom: 0; width: min(100%, 640px); height: 72px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #edf0f2; background: rgba(250,252,253,.97); }
     .home-footer button { width: 100px; color: #8b949d; background: transparent; font-size: 14px; }
     .home-footer button.active { color: var(--wx-blue-dark); }
@@ -56,9 +57,9 @@
     .field { margin-bottom: 18px; }
     .field label, .group-label { display: block; margin-bottom: 9px; color: var(--label-blue); font-size: 17px; font-weight: 600; }
     .required::before { content: "*"; margin-right: 5px; color: #d84c52; }
-    .control, .field select, .field input, .field textarea { width: 100%; min-height: 46px; padding: 0 13px; border: 0; border-radius: 5px; outline: none; background: var(--control-bg); color: #3c454d; }
-    .control:focus, .field select:focus, .field input:focus, .field textarea:focus { box-shadow: 0 0 0 2px rgba(21,148,238,.18); }
-    .field textarea { min-height: 108px; padding-top: 11px; resize: vertical; }
+    .field select, .field input:not([type="checkbox"]), .field textarea { width: 100%; min-height: 46px; padding: 0 13px; border: 0; border-radius: 5px; outline: none; background: var(--control-bg); color: #3c454d; font-size: 16px; }
+    .field select:focus, .field input:focus, .field textarea:focus { box-shadow: 0 0 0 2px rgba(21,148,238,.18); }
+    .field textarea { min-height: 120px; padding-top: 11px; padding-bottom: 28px; resize: vertical; }
     .field input:disabled { color: #858d94; }
     .select-wrap { position: relative; }
     .select-wrap::after { content: "›"; position: absolute; right: 18px; top: 8px; transform: rotate(90deg); color: #8b9399; font-size: 27px; pointer-events: none; }
@@ -66,29 +67,20 @@
     .two-col { display: block; }
     .two-col .field { min-width: 0; }
     .check-group { margin: 1px 0 20px; }
-    .check-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px 12px; }
-    .check-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .scroll-multi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; max-height: 154px; overflow-y: auto; padding: 9px; border: 1px solid var(--line); border-radius: 6px; background: #f7fafc; }
-    .scroll-multi .check-label { min-height: 36px; padding: 7px 8px; border-radius: 5px; background: #fff; }
-    .multi-picker-trigger { width: 100%; min-height: 46px; padding: 0 42px 0 13px; border: 0; border-radius: 5px; color: #64717a; background: var(--control-bg); text-align: left; position: relative; }
+    .multi-picker-trigger { width: 100%; min-height: 46px; padding: 11px 42px 11px 13px; border: 0; border-radius: 5px; color: #64717a; background: var(--control-bg); text-align: left; position: relative; overflow-wrap: anywhere; font-size: 16px; }
     .multi-picker-trigger::after { content: "›"; position: absolute; right: 17px; top: 8px; transform: rotate(90deg); color: #8b9399; font-size: 27px; }
     .multi-picker-trigger.has-value { color: #3c454d; }
     .picker-source { display: none; }
-    .check-label { display: flex; align-items: center; gap: 7px; color: #46515a; font-size: 14px; }
-    .check-label input { width: 18px; height: 18px; margin: 0; accent-color: var(--wx-blue); }
-    .contact-box { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; }
-    .contact-head, .contact-row { display: grid; grid-template-columns: 1fr 1.1fr 1.1fr 58px; min-width: 520px; align-items: center; }
-    .contact-head { color: #53616d; background: #f0f4f7; font-size: 14px; font-weight: 600; }
-    .contact-head > div, .contact-row > div { min-width: 0; padding: 8px 7px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .contact-head > div:last-child, .contact-row > div:last-child { border-right: 0; }
-    .contact-row:last-child > div { border-bottom: 0; }
-    .contact-row input { width: 100%; height: 34px; padding: 0 7px; border: 1px solid #d6e0e6; border-radius: 4px; color: #3f4c56; background: #fff; font-size: 12px; outline: none; }
-    .contact-row.invalid input[required] { border-color: var(--danger); }
-    .contact-actions { display: flex; justify-content: center; gap: 5px; }
-    .row-icon { width: 28px; height: 28px; border-radius: 4px; color: #fff; font-size: 19px; line-height: 1; }
-    .row-icon.add { background: var(--wx-blue-dark); }
-    .row-icon.remove { background: #9aa9b5; }
-    .row-icon.remove:active { background: var(--danger); }
+    .contact-rows { display: grid; gap: 12px; }
+    .contact-row { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .contact-row-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .contact-number { font-weight: 600; color: #53616d; }
+    .contact-row .field { margin-bottom: 13px; }
+    .contact-row .field:last-child { margin-bottom: 0; }
+    .contact-row .field label, .contact-row .group-label { font-size: 14px; }
+    .contact-actions { display: flex; gap: 8px; }
+    .contact-actions button { min-width: 48px; min-height: 40px; padding: 0 8px; border-radius: 4px; color: var(--wx-blue-dark); background: #edf7ff; }
+    .contact-actions .remove { color: #d95d65; background: #fff1f1; }
     .service-tools { display: flex; gap: 8px; margin-bottom: 8px; }
     .service-tools button { min-width: 58px; height: 32px; border-radius: 4px; color: #fff; background: var(--wx-blue-dark); }
     .service-tools .danger { background: #e86b71; }
@@ -106,7 +98,7 @@
     .form-footer { position: sticky; bottom: 0; z-index: 15; display: flex; justify-content: center; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e1e7eb; background: rgba(255,255,255,.97); }
     .submit-btn { width: 100%; height: 49px; border-radius: 28px; color: #fff; background: var(--wx-blue); font-size: 18px; font-weight: 600; box-shadow: 0 5px 13px rgba(21,148,238,.22); }
     .submit-btn:active { background: var(--wx-blue-dark); }
-    .toast { position: fixed; z-index: 40; left: 50%; bottom: 94px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; max-width: calc(100% - 40px); padding: 10px 16px; border-radius: 6px; color: #fff; background: rgba(33, 44, 52, .92); transition: all .2s ease; text-align: center; }
+    .toast { position: fixed; z-index: 70; left: 50%; bottom: 94px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; max-width: calc(100% - 40px); padding: 10px 16px; border-radius: 6px; color: #fff; background: rgba(33, 44, 52, .92); transition: all .2s ease; text-align: center; }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .invalid-field { box-shadow: 0 0 0 2px rgba(217,93,101,.35) !important; }
     .dialog-backdrop { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(25, 39, 50, .46); }
@@ -123,7 +115,8 @@
     .sheet-header strong { font-size: 17px; }
     .sheet-list { max-height: 58vh; overflow-y: auto; padding: 12px 16px 18px; }
     .sheet-option { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 8px 10px; border-bottom: 1px solid #edf1f3; color: #46515a; }
-    .sheet-option input { width: 19px; height: 19px; accent-color: var(--wx-blue); }
+    .sheet-option input { width: 19px; height: 19px; margin: 0; flex: none; accent-color: var(--wx-blue); }
+    .sheet-option span { overflow-wrap: anywhere; }
     @media (max-width: 520px) {
       .home-body { padding: 48px 15px 102px; }
       .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
@@ -135,14 +128,7 @@
       .section-title { margin-bottom: 18px; font-size: 21px; }
       .section-title::before { height: 31px; }
       .field label, .group-label { font-size: 16px; }
-      .scroll-multi { gap: 6px; max-height: 150px; padding: 8px; }
-      .check-label { gap: 5px; font-size: 13px; }
-      .check-label input { width: 16px; height: 16px; }
-      .contact-head, .contact-row { grid-template-columns: 1fr 1.1fr 1.1fr 52px; min-width: 520px; }
-      .contact-head > div, .contact-row > div { padding-left: 5px; padding-right: 5px; }
-      .contact-row input { font-size: 11px; padding: 0 5px; }
-      .row-icon { width: 24px; height: 26px; font-size: 17px; }
-      .contact-actions { gap: 3px; }
+      .home-card.partner { min-height: 110px; }
     }
   </style>
 </head>
@@ -156,188 +142,294 @@
           <button class="home-card rate"><span class="card-icon">▰</span><h2>运价查询</h2></button>
           <button class="home-card order"><span class="card-icon">＋</span><h2>在线下单</h2></button>
           <button class="home-card query"><span class="card-icon">▤</span><h2>订单查询</h2></button>
-          <button class="home-card customer" data-open="customer-page"><span class="card-icon">♙</span><h2>客户申请</h2></button>
-          <button class="home-card supplier" data-open="supplier-page"><span class="card-icon">♜</span><h2>供应商申请</h2></button>
+          <button class="home-card partner" data-open="partner-page"><span class="card-icon">♙</span><h2>新增客商申请</h2></button>
         </div>
       </main>
       <nav class="home-footer"><button class="active"><span class="nav-icon">⌂</span>首页</button><button><span class="nav-icon">♙</span>我的</button></nav>
     </section>
 
-    <section class="page form-page" id="customer-page">
-      <header class="mp-header"><button class="back" data-back="home-page" aria-label="返回">‹</button><div class="mp-title">客户申请</div><div class="mp-actions"><div class="mini-menu"><span>•••</span><span class="divide"></span><span>◉</span></div></div></header>
-      <main class="form-scroll"><form class="form-card" id="customer-form">
+    <section class="page form-page" id="partner-page">
+      <header class="mp-header"><button class="back" data-back="home-page" aria-label="返回">‹</button><div class="mp-title">新增客商申请</div><div class="mp-actions"><div class="mini-menu"><span>•••</span><span class="divide"></span><span>◉</span></div></div></header>
+      <main class="form-scroll"><form class="form-card" id="partner-form" novalidate>
         <h1 class="section-title">基础信息</h1>
-        <div class="two-col">
-          <div class="field"><label class="required">国内/境外</label><div class="select-wrap"><select required><option value="">请选择</option><option>国内</option><option>境外</option></select></div></div>
-          <div class="field"><label class="required">中文名称</label><input required placeholder="请输入中文名称" /></div>
-          <div class="field"><label class="required">简称</label><input required placeholder="请输入简称" /></div>
-          <div class="field"><label class="required">英文名称</label><input required placeholder="请输入英文名称" /></div>
-          <div class="field"><label class="required">含海外仓</label><div class="select-wrap"><select required><option value="">请选择</option><option>是</option><option>否</option></select></div></div>
-          <div class="field"><label class="required">是否同行</label><div class="select-wrap"><select required><option value="">请选择</option><option>是</option><option>否</option></select></div></div>
-          <div class="field"><label class="required">客户级别</label><div class="select-wrap"><select required><option value="">请选择</option><option>S类</option><option>A类</option><option>B类</option></select></div></div>
-          <div class="field"><label class="required">地址</label><input required placeholder="请输入地址" /></div>
-          <div class="field"><label class="required">贸易类型</label><input required placeholder="请输入关键词" /></div>
-          <div class="field"><label>账期</label><div class="select-wrap"><select><option>票结</option><option>月结</option></select></div></div>
-          <div class="field"><label>额度</label><input type="number" min="0" value="0" /></div>
-          <div class="field"><label class="required">签订合同</label><div class="select-wrap"><select required><option value="">请选择</option><option>是</option><option>否</option></select></div></div>
-          <div class="field"><label class="required">最迟签订合同日期</label><input type="date" required /></div>
+        <div class="field" id="partner-type-picker" data-picker-group="partner-type" data-required-group>
+          <label class="group-label required" id="partner-type-label">客商类型</label>
+          <button type="button" class="multi-picker-trigger" data-placeholder="请选择客商类型" aria-labelledby="partner-type-label partner-type-trigger" id="partner-type-trigger" aria-haspopup="dialog" aria-expanded="false">客户</button>
+          <div class="picker-source"><label><input type="checkbox" name="partnerType" value="客户" checked />客户</label><label><input type="checkbox" name="partnerType" value="供应商" />供应商</label></div>
         </div>
-        <div class="check-group"><div class="group-label">角色</div><label class="check-label"><input type="checkbox" checked />客户</label></div>
-        <div class="check-group" data-required-group data-picker-group="customer-business"><div class="group-label required">相关业务类型</div><button type="button" class="multi-picker-trigger" data-picker-trigger="customer-business">请选择相关业务类型</button><div class="picker-source"><label class="check-label"><input type="checkbox" value="海运出口" />海运出口</label><label class="check-label"><input type="checkbox" value="海运进口" />海运进口</label><label class="check-label"><input type="checkbox" value="空运出口" />空运出口</label><label class="check-label"><input type="checkbox" value="空运进口" />空运进口</label><label class="check-label"><input type="checkbox" value="铁路业务" />铁路业务</label><label class="check-label"><input type="checkbox" value="综合物流" />综合物流</label></div></div>
+        <div class="field"><label class="required" for="region">国内/境外</label><div class="select-wrap"><select id="region" name="region" required><option value="">请选择</option><option>国内</option><option>境外</option></select></div></div>
+        <div class="field"><label class="required" for="chinese-name">中文名称</label><input id="chinese-name" name="chineseName" required placeholder="请输入中文名称" /></div>
+        <div class="field"><label class="required" for="short-name">简称</label><input id="short-name" name="shortName" required placeholder="请输入简称" /></div>
+        <div class="field"><label class="required" for="english-name">英文名称</label><input id="english-name" name="englishName" required placeholder="请输入英文名称" /></div>
+        <div class="field customer-only"><label class="required" for="overseas-warehouse">含海外仓</label><div class="select-wrap"><select id="overseas-warehouse" name="overseasWarehouse" data-customer-required required><option value="">请选择</option><option>是</option><option>否</option></select></div></div>
+        <div class="field"><label class="required" for="is-peer">是否同行</label><div class="select-wrap"><select id="is-peer" name="isPeer" required><option value="">请选择</option><option>是</option><option>否</option></select></div></div>
+        <div class="field customer-only"><label class="required" for="customer-level">客户级别</label><div class="select-wrap"><select id="customer-level" name="customerLevel" data-customer-required required><option value="">请选择</option><option>S类</option><option>A类</option><option>B类</option></select></div></div>
+        <div class="field"><label class="required" for="address">地址</label><input id="address" name="address" required placeholder="请输入地址" /></div>
+        <div class="field customer-only"><label class="required" for="trade-type">贸易类型</label><input id="trade-type" name="tradeType" data-customer-required required placeholder="请输入关键词" /></div>
+        <div class="field customer-only"><label for="payment-term">账期</label><div class="select-wrap"><select id="payment-term" name="paymentTerm"><option>票结</option><option>月结</option></select></div></div>
+        <div class="field customer-only"><label for="credit-limit">额度</label><input id="credit-limit" name="creditLimit" type="number" min="0" value="0" /></div>
+        <div class="field"><label class="required" for="contract-status">签订合同</label><div class="select-wrap"><select id="contract-status" name="contractStatus" required><option value="未签订" selected>未签订</option><option value="已签订">已签订</option></select></div></div>
+        <div class="field" id="contract-date-field"><label class="required" for="contract-deadline">最迟签订合同日期</label><input id="contract-deadline" name="contractDeadline" type="date" required /></div>
+        <div class="check-group" data-picker-group="partner-role">
+          <div class="group-label" id="partner-role-label">角色</div>
+          <button type="button" id="partner-role-trigger" class="multi-picker-trigger" data-placeholder="请选择角色" aria-labelledby="partner-role-label partner-role-trigger" aria-haspopup="dialog" aria-expanded="false">客户</button>
+          <div class="picker-source"><label id="customer-role-option"><input type="checkbox" name="partnerRole" value="客户" checked />客户</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="订舱代理/换单代理" disabled />订舱代理/换单代理</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="船代" disabled />船代</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="目的港代理" disabled />目的港代理</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="指定货代" disabled />指定货代</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="本地代理" disabled />本地代理</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="结算代理" disabled />结算代理</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="船公司" disabled />船公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="航空公司" disabled />航空公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="清关行" disabled />清关行</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="仓库" disabled />仓库</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="卡车公司" disabled />卡车公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="发货人" disabled />发货人</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="收货人" disabled />收货人</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="通知人" disabled />通知人</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="口岸代理" disabled />口岸代理</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="发运代理" disabled />发运代理</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="装货地公司" disabled />装货地公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="签单地公司" disabled />签单地公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="码头公司" disabled />码头公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="卸货港公司" disabled />卸货港公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="目的港公司" disabled />目的港公司</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="贸易商" disabled />贸易商</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="工厂/生产商" disabled />工厂/生产商</label><label class="supplier-role-option" hidden><input type="checkbox" name="partnerRole" value="其他" disabled />其他</label></div>
+        </div>
+        <div class="check-group" data-picker-group="partner-business" data-required-group>
+          <div class="group-label required" id="partner-business-label">相关业务类型</div>
+          <button type="button" id="partner-business-trigger" class="multi-picker-trigger" data-placeholder="请选择相关业务类型" aria-labelledby="partner-business-label partner-business-trigger" aria-haspopup="dialog" aria-expanded="false">请选择相关业务类型</button>
+          <div class="picker-source"><label><input type="checkbox" name="businessType" value="海运出口" />海运出口</label><label><input type="checkbox" name="businessType" value="海运进口" />海运进口</label><label><input type="checkbox" name="businessType" value="空运出口" />空运出口</label><label><input type="checkbox" name="businessType" value="空运进口" />空运进口</label><label><input type="checkbox" name="businessType" value="铁路业务" />铁路业务</label><label data-business-option="综合物流"><input type="checkbox" name="businessType" value="综合物流" />综合物流</label></div>
+        </div>
 
-        <h2 class="section-title compact required">客户联系人信息</h2>
-        <div class="contact-box" data-contact-list="customer"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
+        <h2 class="section-title compact" data-contact-title>客商联系人信息</h2>
+        <div class="contact-rows" id="contact-list"></div>
 
-        <h2 class="section-title compact">合作伙伴对应的服务人员</h2>
-        <div class="service-tools"><button type="button">新增</button><button type="button">编辑</button><button type="button" class="danger">删除</button></div>
-        <div class="service-table"><table><thead><tr><th>岗位类型</th><th>业务类型</th><th>用户</th><th>是否默认</th><th>备注</th></tr></thead><tbody><tr><td class="empty" colspan="5">无查询结果</td></tr></tbody></table></div>
+        <section class="customer-only">
+          <h2 class="section-title compact">服务客商人员</h2>
+          <div class="service-tools"><button type="button">新增</button><button type="button">编辑</button><button type="button" class="danger">删除</button></div>
+          <div class="service-table"><table><thead><tr><th>岗位类型</th><th>业务类型</th><th>用户</th><th>是否默认</th><th>备注</th></tr></thead><tbody><tr><td class="empty" colspan="5">无查询结果</td></tr></tbody></table></div>
+        </section>
 
         <h2 class="section-title compact">申请资料</h2>
-        <div class="upload-row"><label class="required">信控额度自测表</label><button type="button" class="upload-btn">上传</button></div>
-        <div class="upload-row"><label class="required">客户档案</label><button type="button" class="upload-btn">上传</button></div>
-        <div class="upload-row"><label class="required">客户托书</label><button type="button" class="upload-btn">上传</button></div>
-        <div class="field"><label>申请原因</label><textarea maxlength="500" placeholder="请输入申请原因"></textarea><div class="counter">0/500</div></div>
+        <div class="upload-row customer-only"><label class="required">信控额度自测表</label><button type="button" class="upload-btn">上传</button></div>
+        <div class="upload-row customer-only"><label class="required">客户档案</label><button type="button" class="upload-btn">上传</button></div>
+        <div class="upload-row customer-only"><label class="required">客户托书</label><button type="button" class="upload-btn">上传</button></div>
+        <div class="upload-row supplier-only" hidden><label class="required">供应商档案</label><button type="button" class="upload-btn">上传</button></div>
+        <div class="field"><label for="application-content">申请内容</label><textarea id="application-content" name="applicationContent" maxlength="500" placeholder="请输入申请内容"></textarea><div class="counter" id="content-counter">0/500</div></div>
       </form></main>
-      <footer class="form-footer"><button class="submit-btn" data-submit="customer-form">保存并提交</button></footer>
-    </section>
-
-    <section class="page form-page" id="supplier-page">
-      <header class="mp-header"><button class="back" data-back="home-page" aria-label="返回">‹</button><div class="mp-title">供应商申请</div><div class="mp-actions"><div class="mini-menu"><span>•••</span><span class="divide"></span><span>◉</span></div></div></header>
-      <main class="form-scroll"><form class="form-card" id="supplier-form">
-        <h1 class="section-title">基础信息</h1>
-        <div class="two-col">
-          <div class="field"><label class="required">国内/境外</label><div class="select-wrap"><select required><option value="">请选择</option><option>国内</option><option>境外</option></select></div></div>
-          <div class="field"><label class="required">中文名称</label><input required placeholder="请输入中文名称" /></div>
-          <div class="field"><label class="required">简称</label><input required placeholder="请输入简称" /></div>
-          <div class="field"><label class="required">英文名称</label><input required placeholder="请输入英文名称" /></div>
-          <div class="field"><label class="required">是否同行</label><div class="select-wrap"><select required><option value="">请选择</option><option>是</option><option>否</option></select></div></div>
-          <div class="field"><label class="required">有无合同</label><div class="select-wrap"><select required><option value="">请选择</option><option>有合同</option><option>无合同</option></select></div></div>
-          <div class="field"><label>地址</label><input placeholder="请输入地址" /></div>
-        </div>
-        <div class="check-group" data-picker-group="supplier-role"><div class="group-label">角色</div><button type="button" class="multi-picker-trigger" data-picker-trigger="supplier-role">请选择角色</button><div class="picker-source"><label class="check-label"><input type="checkbox" value="订舱代理/换单代理" />订舱代理/换单代理</label><label class="check-label"><input type="checkbox" value="船代" />船代</label><label class="check-label"><input type="checkbox" value="目的港代理" />目的港代理</label><label class="check-label"><input type="checkbox" value="指定货代" />指定货代</label><label class="check-label"><input type="checkbox" value="本地代理" />本地代理</label><label class="check-label"><input type="checkbox" value="结算代理" />结算代理</label><label class="check-label"><input type="checkbox" value="船公司" />船公司</label><label class="check-label"><input type="checkbox" value="航空公司" />航空公司</label><label class="check-label"><input type="checkbox" value="清关行" />清关行</label><label class="check-label"><input type="checkbox" value="仓库" />仓库</label><label class="check-label"><input type="checkbox" value="卡车公司" />卡车公司</label><label class="check-label"><input type="checkbox" value="发货人" />发货人</label><label class="check-label"><input type="checkbox" value="收货人" />收货人</label><label class="check-label"><input type="checkbox" value="通知人" />通知人</label><label class="check-label"><input type="checkbox" value="口岸代理" />口岸代理</label><label class="check-label"><input type="checkbox" value="发运代理" />发运代理</label><label class="check-label"><input type="checkbox" value="装货地公司" />装货地公司</label><label class="check-label"><input type="checkbox" value="签单地公司" />签单地公司</label><label class="check-label"><input type="checkbox" value="码头公司" />码头公司</label><label class="check-label"><input type="checkbox" value="卸货港公司" />卸货港公司</label><label class="check-label"><input type="checkbox" value="目的港公司" />目的港公司</label><label class="check-label"><input type="checkbox" value="贸易商" />贸易商</label><label class="check-label"><input type="checkbox" value="工厂/生产商" />工厂/生产商</label><label class="check-label"><input type="checkbox" value="其他" />其他</label></div></div>
-        <div class="check-group" data-required-group data-picker-group="supplier-business"><div class="group-label required">相关业务类型</div><button type="button" class="multi-picker-trigger" data-picker-trigger="supplier-business">请选择相关业务类型</button><div class="picker-source"><label class="check-label"><input type="checkbox" value="海运出口" />海运出口</label><label class="check-label"><input type="checkbox" value="海运进口" />海运进口</label><label class="check-label"><input type="checkbox" value="空运出口" />空运出口</label><label class="check-label"><input type="checkbox" value="空运进口" />空运进口</label><label class="check-label"><input type="checkbox" value="铁路业务" />铁路业务</label></div></div>
-
-        <h2 class="section-title compact">供应商联系人信息</h2>
-        <div class="contact-box" data-contact-list="supplier"><div class="contact-head"><div>联系人</div><div>联系电话</div><div>联系邮箱</div><div>操作</div></div><div class="contact-rows"></div></div>
-
-        <h2 class="section-title compact">申请资料</h2>
-        <div class="upload-row"><label class="required">供应商档案</label><button type="button" class="upload-btn">上传</button></div>
-        <div class="field"><label class="required">审批内容简述</label><textarea maxlength="500" required placeholder="请输入审批内容简述"></textarea><div class="counter">0/500</div></div>
-      </form></main>
-      <footer class="form-footer"><button class="submit-btn" data-submit="supplier-form">保存并提交</button></footer>
+      <footer class="form-footer"><button type="submit" form="partner-form" class="submit-btn">提交</button></footer>
     </section>
   </div>
   <div class="toast" id="toast" role="status"></div>
-  <div class="dialog-backdrop" id="success-dialog" role="dialog" aria-modal="true" aria-labelledby="success-title">
-    <div class="dialog"><div class="dialog-title" id="success-title">提交成功</div><p class="dialog-message">申请已提交，后续请至企微查看审批流程。</p><button type="button" class="dialog-confirm" id="success-confirm">我知道了</button></div>
+  <div class="dialog-backdrop" id="success-dialog" role="dialog" aria-modal="true" aria-labelledby="success-title" aria-hidden="true">
+    <div class="dialog"><div class="dialog-title" id="success-title">提交成功</div><p class="dialog-message">申请已提交，已进入企微“客商申请审核”流程，审批节点将按客商类型配置。</p><button type="button" class="dialog-confirm" id="success-confirm">我知道了</button></div>
   </div>
-  <div class="sheet-backdrop" id="multi-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet-backdrop" id="multi-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-hidden="true">
     <div class="multi-sheet"><div class="sheet-header"><button type="button" id="sheet-cancel">取消</button><strong id="sheet-title">请选择</strong><button type="button" id="sheet-confirm">完成</button></div><div class="sheet-list" id="sheet-list"></div></div>
   </div>
   <script>
     (() => {
+      const form = document.getElementById('partner-form');
+      const typePicker = document.getElementById('partner-type-picker');
+      const contactList = document.getElementById('contact-list');
+      const contractStatus = document.getElementById('contract-status');
+      const contractDateField = document.getElementById('contract-date-field');
+      const contractDeadline = document.getElementById('contract-deadline');
+      const applicationContent = document.getElementById('application-content');
+      const sheet = document.getElementById('multi-sheet');
+      const sheetList = document.getElementById('sheet-list');
+      const successDialog = document.getElementById('success-dialog');
       const toast = document.getElementById('toast');
       let toastTimer;
+      let contactId = 0;
+      let activePicker = null;
+      let draftInputs = [];
+
       function showToast(message) {
-        toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
         toastTimer = setTimeout(() => toast.classList.remove('show'), 2300);
       }
-      function createContactRow() {
-        const row = document.createElement('div'); row.className = 'contact-row';
-        row.innerHTML = '<div><input name="contactName" required placeholder="请输入联系人" aria-label="联系人" /></div>' +
-          '<div><input name="contactPhone" required placeholder="请输入联系电话" aria-label="联系电话" /></div>' +
-          '<div><input name="contactEmail" type="email" placeholder="请输入联系邮箱" aria-label="联系邮箱" /></div>' +
-          '<div class="contact-actions"><button type="button" class="row-icon add" title="新增一行" aria-label="新增一行">＋</button><button type="button" class="row-icon remove" title="删除当前行" aria-label="删除当前行">−</button></div>';
-        return row;
+      function selectedValues(group) {
+        return [...group.querySelectorAll('.picker-source input[type="checkbox"]:checked')].filter(input => !input.disabled).map(input => input.value);
       }
-      document.querySelectorAll('[data-contact-list]').forEach(box => {
-        const list = box.querySelector('.contact-rows'); const optional = box.dataset.contactList === 'supplier';
-        const firstRow = createContactRow(); if (optional) firstRow.querySelectorAll('[required]').forEach(input => input.removeAttribute('required')); list.appendChild(firstRow);
-        box.addEventListener('click', event => {
-          const row = event.target.closest('.contact-row');
-          if (event.target.closest('.add')) { const next = createContactRow(); if (optional) next.querySelectorAll('[required]').forEach(input => input.removeAttribute('required')); row.after(next); next.querySelector('input').focus(); }
-          if (event.target.closest('.remove')) {
-            if (list.children.length === 1) { showToast('至少保留一条联系人信息'); return; }
-            row.remove();
-          }
+      function selectedPartnerTypes() { return selectedValues(typePicker); }
+      function updatePickerTrigger(group) {
+        const selected = selectedValues(group);
+        const trigger = group.querySelector('.multi-picker-trigger');
+        trigger.textContent = selected.length ? selected.join('、') : trigger.dataset.placeholder;
+        trigger.classList.toggle('has-value', selected.length > 0);
+        if (selected.length) trigger.classList.remove('invalid-field');
+      }
+      function setRequired(input, required) {
+        input.required = required;
+        const label = input.closest('.field').querySelector('label');
+        label.classList.toggle('required', required);
+        if (!required) input.classList.remove('invalid-field');
+      }
+      function refreshContractDate() {
+        const unsigned = contractStatus.value === '未签订';
+        contractDateField.hidden = !unsigned;
+        contractDeadline.disabled = !unsigned;
+        setRequired(contractDeadline, unsigned && selectedPartnerTypes().includes('客户'));
+      }
+      function refreshContactRequirements(row) {
+        const hasCustomer = selectedPartnerTypes().includes('客户');
+        row.querySelectorAll('[name="contactName"], [name="contactPhone"]').forEach(input => setRequired(input, hasCustomer));
+      }
+      function refreshPartnerTypeSections() {
+        const values = selectedPartnerTypes();
+        const hasCustomer = values.includes('客户');
+        const hasSupplier = values.includes('供应商');
+        form.querySelectorAll('.customer-only').forEach(element => {
+          element.hidden = !hasCustomer;
+          element.querySelectorAll('input, select, textarea, button').forEach(input => { input.disabled = !hasCustomer; });
         });
-      });
+        form.querySelectorAll('[data-customer-required]').forEach(input => setRequired(input, hasCustomer));
+        form.querySelectorAll('.supplier-only').forEach(element => { element.hidden = !hasSupplier; });
+        setRequired(form.elements.address, hasCustomer);
+        setRequired(applicationContent, hasSupplier);
+        const roleGroup = form.querySelector('[data-picker-group="partner-role"]');
+        roleGroup.querySelectorAll('.picker-source label').forEach(label => {
+          const input = label.querySelector('input');
+          const isCustomerRole = input.value === '客户';
+          const visible = isCustomerRole ? hasCustomer : hasSupplier;
+          label.hidden = !visible;
+          input.disabled = !visible;
+          input.checked = isCustomerRole && hasCustomer && !hasSupplier;
+        });
+        const comprehensive = form.querySelector('[data-business-option="综合物流"]');
+        comprehensive.hidden = !hasCustomer;
+        comprehensive.querySelector('input').disabled = !hasCustomer;
+        if (!hasCustomer) comprehensive.querySelector('input').checked = false;
+        contactList.querySelectorAll('.contact-row').forEach(row => {
+          refreshContactRequirements(row);
+          const picker = row.querySelector('[data-picker-group]');
+          picker.querySelectorAll('.picker-source input').forEach(input => { input.checked = values.includes(input.value); });
+          updatePickerTrigger(picker);
+        });
+        refreshContractDate();
+        form.querySelectorAll('[data-picker-group]').forEach(updatePickerTrigger);
+      }
+      function renumberContacts() {
+        contactList.querySelectorAll('.contact-row').forEach((row, index) => {
+          row.querySelector('.contact-number').textContent = '联系人 ' + (index + 1);
+          row.querySelector('.add').setAttribute('aria-label', '在联系人 ' + (index + 1) + ' 后新增');
+          row.querySelector('.remove').setAttribute('aria-label', '删除联系人 ' + (index + 1));
+        });
+      }
+      function addContact(sourceRow) {
+        const id = ++contactId;
+        const row = document.createElement('div');
+        row.className = 'contact-row';
+        row.innerHTML = [
+          '<div class="contact-row-header"><span class="contact-number"></span><div class="contact-actions"><button type="button" class="add">新增</button><button type="button" class="remove">删除</button></div></div>',
+          '<div class="field"><label for="contact-name-' + id + '">联系人</label><input id="contact-name-' + id + '" name="contactName" placeholder="请输入联系人" /></div>',
+          '<div class="field" data-picker-group="contact-type-' + id + '"><div class="group-label" id="contact-type-label-' + id + '">客商类型</div><button type="button" class="multi-picker-trigger" id="contact-type-trigger-' + id + '" aria-labelledby="contact-type-label-' + id + ' contact-type-trigger-' + id + '" data-placeholder="请选择客商类型" aria-haspopup="dialog" aria-expanded="false">请选择客商类型</button><div class="picker-source"><label><input type="checkbox" name="contactPartnerType" value="客户" />客户</label><label><input type="checkbox" name="contactPartnerType" value="供应商" />供应商</label></div></div>',
+          '<div class="field"><label for="contact-phone-' + id + '">联系电话</label><input id="contact-phone-' + id + '" name="contactPhone" type="tel" placeholder="请输入联系电话" /></div>',
+          '<div class="field"><label for="contact-email-' + id + '">联系邮箱</label><input id="contact-email-' + id + '" name="contactEmail" type="email" placeholder="请输入联系邮箱" /></div>'
+        ].join('');
+        row.querySelectorAll('[name="contactPartnerType"]').forEach(input => { input.checked = selectedPartnerTypes().includes(input.value); });
+        if (sourceRow) sourceRow.after(row); else contactList.appendChild(row);
+        refreshContactRequirements(row);
+        updatePickerTrigger(row.querySelector('[data-picker-group]'));
+        renumberContacts();
+        if (sourceRow) row.querySelector('[name="contactName"]').focus();
+      }
       function showPage(pageId) {
         document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === pageId));
         window.scrollTo({ top: 0, behavior: 'instant' });
       }
-      document.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.open)));
-      document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.back)));
-      document.querySelectorAll('textarea').forEach(area => area.addEventListener('input', () => { const counter = area.parentElement.querySelector('.counter'); if (counter) counter.textContent = `${area.value.length}/500`; }));
-      const sheet = document.getElementById('multi-sheet');
-      const sheetList = document.getElementById('sheet-list');
-      const sheetTitle = document.getElementById('sheet-title');
-      let activePicker = null;
-      let initialPickerValues = [];
-      function updatePickerTrigger(group) {
-        const sourceInputs = [...group.querySelectorAll('.picker-source input[type="checkbox"]')];
-        const selected = sourceInputs.filter(input => input.checked).map(input => input.value);
-        const trigger = group.querySelector('.multi-picker-trigger');
-        trigger.textContent = selected.length ? selected.join('、') : trigger.dataset.placeholder;
-        trigger.classList.toggle('has-value', selected.length > 0);
-      }
-      function closePicker(restore) {
-        if (!activePicker) return;
-        const inputs = [...activePicker.querySelectorAll('.picker-source input[type="checkbox"]')];
-        if (restore) inputs.forEach((input, index) => { input.checked = initialPickerValues[index]; });
-        updatePickerTrigger(activePicker);
-        activePicker = null; sheet.classList.remove('open');
-      }
       function openPicker(group) {
         activePicker = group;
-        const sourceLabels = [...group.querySelectorAll('.picker-source label')];
-        const sourceInputs = sourceLabels.map(label => label.querySelector('input[type="checkbox"]'));
-        initialPickerValues = sourceInputs.map(input => input.checked);
-        sheetTitle.textContent = group.querySelector('.group-label').textContent.replace('*', '').trim();
-        sheetList.innerHTML = '';
-        sourceLabels.forEach((label, index) => {
-          const sourceInput = sourceInputs[index];
-          const option = document.createElement('label'); option.className = 'sheet-option';
-          option.innerHTML = `<input type="checkbox" ${sourceInput.checked ? 'checked' : ''}><span>${label.textContent.trim()}</span>`;
-          option.querySelector('input').addEventListener('change', event => { sourceInput.checked = event.target.checked; });
+        draftInputs = [];
+        sheetList.replaceChildren();
+        document.getElementById('sheet-title').textContent = group.querySelector('.group-label').textContent;
+        group.querySelectorAll('.picker-source label').forEach(label => {
+          const source = label.querySelector('input');
+          if (label.hidden || source.disabled) return;
+          const option = document.createElement('label');
+          option.className = 'sheet-option';
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = source.checked;
+          checkbox.value = source.value;
+          const text = document.createElement('span');
+          text.textContent = label.textContent.trim();
+          option.append(checkbox, text);
           sheetList.appendChild(option);
+          draftInputs.push({ source, checkbox });
         });
+        group.querySelector('.multi-picker-trigger').setAttribute('aria-expanded', 'true');
         sheet.classList.add('open');
+        sheet.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('sheet-cancel').focus();
       }
-      document.querySelectorAll('[data-picker-group]').forEach(group => {
-        const trigger = group.querySelector('[data-picker-trigger]'); trigger.dataset.placeholder = trigger.textContent.trim(); updatePickerTrigger(group);
-        trigger.addEventListener('click', () => openPicker(group));
-      });
-      document.getElementById('sheet-cancel').addEventListener('click', () => closePicker(true));
-      document.getElementById('sheet-confirm').addEventListener('click', () => closePicker(false));
-      sheet.addEventListener('click', event => { if (event.target === sheet) closePicker(true); });
-      const successDialog = document.getElementById('success-dialog');
-      document.getElementById('success-confirm').addEventListener('click', () => successDialog.classList.remove('open'));
-      successDialog.addEventListener('click', event => { if (event.target === successDialog) successDialog.classList.remove('open'); });
-      function showSuccessDialog() { successDialog.classList.add('open'); }
-      function validate(form) {
-        let valid = true; let firstInvalid = null;
-        form.querySelectorAll('[required]').forEach(input => {
-          const empty = !String(input.value || '').trim(); input.classList.toggle('invalid-field', empty);
-          if (empty) { valid = false; firstInvalid ||= input; }
+      function closePicker() {
+        const trigger = activePicker?.querySelector('.multi-picker-trigger');
+        trigger?.setAttribute('aria-expanded', 'false');
+        sheet.classList.remove('open');
+        sheet.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        activePicker = null;
+        draftInputs = [];
+        trigger?.focus({ preventScroll: true });
+      }
+      function confirmPicker() {
+        if (!activePicker) return;
+        const isPartnerType = activePicker === typePicker;
+        if (isPartnerType && !draftInputs.some(item => item.checkbox.checked)) {
+          showToast('至少选择一种客商类型');
+          return;
+        }
+        const changed = draftInputs.some(item => item.source.checked !== item.checkbox.checked);
+        draftInputs.forEach(item => { item.source.checked = item.checkbox.checked; });
+        updatePickerTrigger(activePicker);
+        if (isPartnerType && changed) refreshPartnerTypeSections();
+        closePicker();
+      }
+      function validate() {
+        let firstInvalid = null;
+        form.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(input => {
+          const invalid = !input.disabled && ((input.required && !input.value.trim()) || !input.validity.valid);
+          input.classList.toggle('invalid-field', invalid);
+          if (invalid && !firstInvalid) firstInvalid = input;
         });
         form.querySelectorAll('[data-required-group]').forEach(group => {
-          const checked = group.querySelector('input[type="checkbox"]:checked'); group.classList.toggle('invalid-field', !checked);
-          group.querySelector('.multi-picker-trigger')?.classList.toggle('invalid-field', !checked);
-          if (!checked) { valid = false; firstInvalid ||= group; }
+          const invalid = !selectedValues(group).length;
+          const trigger = group.querySelector('.multi-picker-trigger');
+          trigger.classList.toggle('invalid-field', invalid);
+          if (invalid && !firstInvalid) firstInvalid = trigger;
         });
-        const supplierForm = form.id === 'supplier-form';
-        form.querySelectorAll('.contact-row').forEach(row => {
-          if (supplierForm) { row.classList.remove('invalid'); return; }
-          const name = row.querySelector('[name="contactName"]'); const phone = row.querySelector('[name="contactPhone"]'); const invalid = !name.value.trim() || !phone.value.trim();
-          row.classList.toggle('invalid', invalid); if (invalid) { valid = false; firstInvalid ||= row; }
-        });
-        if (!valid) { showToast('请补充必填信息后再提交'); firstInvalid?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-        return valid;
+        if (firstInvalid) {
+          showToast('请补充必填信息并检查填写格式');
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstInvalid.focus({ preventScroll: true });
+          return false;
+        }
+        return true;
       }
-      document.querySelectorAll('[data-submit]').forEach(button => button.addEventListener('click', () => {
-        const form = document.getElementById(button.dataset.submit); if (!validate(form)) return; showSuccessDialog();
-      }));
+      function closeSuccess() {
+        successDialog.classList.remove('open');
+        successDialog.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        showPage('home-page');
+      }
+      document.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.open)));
+      document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.back)));
+      form.addEventListener('click', event => {
+        const trigger = event.target.closest('.multi-picker-trigger');
+        if (trigger) openPicker(trigger.closest('[data-picker-group]'));
+      });
+      contactList.addEventListener('click', event => {
+        const row = event.target.closest('.contact-row');
+        if (event.target.closest('.add')) addContact(row);
+        if (event.target.closest('.remove')) {
+          if (contactList.children.length === 1) { showToast('至少保留一条联系人信息'); return; }
+          row.remove();
+          renumberContacts();
+        }
+      });
+      contractStatus.addEventListener('change', refreshContractDate);
+      applicationContent.addEventListener('input', () => { document.getElementById('content-counter').textContent = applicationContent.value.length + '/500'; });
+      form.addEventListener('input', event => { event.target.classList.remove('invalid-field'); });
+      document.getElementById('sheet-cancel').addEventListener('click', closePicker);
+      document.getElementById('sheet-confirm').addEventListener('click', confirmPicker);
+      sheet.addEventListener('click', event => { if (event.target === sheet) closePicker(); });
+      document.addEventListener('keydown', event => { if (event.key === 'Escape' && activePicker) closePicker(); });
+      document.getElementById('success-confirm').addEventListener('click', closeSuccess);
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        if (!validate()) return;
+        successDialog.classList.add('open');
+        successDialog.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('success-confirm').focus();
+      });
+      addContact();
+      refreshPartnerTypeSections();
     })();
   </script>
 </body>
