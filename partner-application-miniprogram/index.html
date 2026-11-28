@@ -41,7 +41,40 @@
     .rate { background: linear-gradient(150deg, #45bee8, #178add); }
     .order { background: linear-gradient(150deg, #ff6713, #f13e5b); }
     .query { background: linear-gradient(150deg, #7de9bd, #1ab4d4); }
-    .partner { grid-column: 1 / -1; min-height: 112px; flex-direction: row; background: linear-gradient(150deg, #6ec5ff, #247fe0); }
+    .partner { background: linear-gradient(150deg, #6ec5ff, #247fe0); }
+    .preview-tabs { position: sticky; top: calc(56px + env(safe-area-inset-top)); z-index: 19; display: flex; padding: 0 18px; background: #fff; border-bottom: 1px solid #e5edf3; }
+    .preview-tabs button { flex: 1; min-height: 46px; border-bottom: 3px solid transparent; color: #71808d; background: #fff; font-size: 16px; }
+    .preview-tabs button.active { border-bottom-color: var(--wx-blue); color: var(--wx-blue-dark); font-weight: 600; }
+    .preview-btn { flex: 0 0 42%; min-height: 49px; border: 1px solid var(--wx-blue); border-radius: 28px; background: #fff; color: var(--wx-blue-dark); font-size: 16px; }
+    .form-footer { gap: 10px; }
+    .approval-page { background: var(--page-bg); }
+    .approval-body { padding: 14px 12px 100px; }
+    .approval-types { display: flex; gap: 6px; margin-bottom: 12px; }
+    .approval-types button { flex: 1; min-height: 42px; padding: 8px 4px; border: 1px solid #dbe6ee; border-radius: 6px; color: #607384; background: #fff; }
+    .approval-types button.active { color: var(--wx-blue-dark); background: #eaf6ff; border-color: var(--wx-blue); font-weight: 600; }
+    .approval-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 8px 0 14px; color: var(--muted); font-size: 12px; }
+    .approval-toolbar select { max-width: 120px; padding: 6px; border: 1px solid var(--line); border-radius: 4px; color: #4d6374; background: #fff; }
+    .approval-card { padding: 18px 14px; margin-bottom: 12px; border-radius: 8px; background: #fff; }
+    .approval-card h2 { margin: 0 0 14px; color: #263b4a; font-size: 16px; }
+    .approval-hero { display: flex; gap: 12px; align-items: flex-start; }
+    .approval-avatar { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 8px; background: #e5f3ff; color: var(--wx-blue-dark); font-size: 23px; }
+    .approval-heading { min-width: 0; }
+    .approval-heading h1 { margin: 0 0 8px; font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+    .approval-status { padding: 3px 7px; color: #168444; background: #e6f7ed; border-radius: 3px; font-size: 12px; }
+    .approval-status.pending { color: #bb7a0b; background: #fff4d8; }
+    .approval-row { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; margin: 15px 0; line-height: 1.7; }
+    .approval-row:last-child { margin-bottom: 0; }
+    .approval-label { color: #8593a0; }
+    .approval-value { min-width: 0; color: #263846; overflow-wrap: anywhere; }
+    .approval-contact + .approval-contact { margin-top: 16px; padding-top: 10px; border-top: 1px solid #edf1f4; }
+    .approval-contact h3 { font-size: 14px; color: #617b8d; }
+    .approval-file { width: 100%; padding: 10px; border-radius: 5px; color: #3d5465; background: #f3f6f8; text-align: left; overflow-wrap: anywhere; }
+    .approval-timeline { border-left: 2px solid #b9dcf8; padding-left: 18px; margin-left: 7px; }
+    .approval-node { position: relative; padding: 0 0 22px; }
+    .approval-node::before { content: ''; position: absolute; left: -25px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--wx-blue); }
+    .approval-node p { margin: 6px 0 0; color: #8593a0; font-size: 12px; }
+    .approval-foot { position: fixed; bottom: 0; z-index: 18; width: min(100%, 640px); padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5edf3; background: #fff; }
+    .approval-foot button { width: 100%; min-height: 44px; border-radius: 6px; background: #f2f5f7; color: #3c5364; font-size: 16px; }
     .home-footer { position: fixed; z-index: 10; bottom: 0; width: min(100%, 640px); height: 72px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #edf0f2; background: rgba(250,252,253,.97); }
     .home-footer button { width: 100px; color: #8b949d; background: transparent; font-size: 14px; }
     .home-footer button.active { color: var(--wx-blue-dark); }
@@ -128,7 +161,6 @@
       .section-title { margin-bottom: 18px; font-size: 21px; }
       .section-title::before { height: 31px; }
       .field label, .group-label { font-size: 16px; }
-      .home-card.partner { min-height: 110px; }
     }
   </style>
 </head>
@@ -136,13 +168,14 @@
   <div class="app-shell">
     <section class="page active" id="home-page">
       <header class="mp-header"><div class="mp-title">海创</div><div class="mp-actions"><div class="mini-menu"><span>•••</span><span class="divide"></span><span>◉</span></div></div></header>
+      <nav class="preview-tabs" aria-label="原型页面切换"><button type="button" class="active" data-view="application">客商申请</button><button type="button" data-view="approval">审批页</button></nav>
       <main class="home-body">
         <div class="home-grid">
           <button class="home-card quote"><span class="card-icon">¥</span><h2>询价管理</h2></button>
           <button class="home-card rate"><span class="card-icon">▰</span><h2>运价查询</h2></button>
           <button class="home-card order"><span class="card-icon">＋</span><h2>在线下单</h2></button>
           <button class="home-card query"><span class="card-icon">▤</span><h2>订单查询</h2></button>
-          <button class="home-card partner" data-open="partner-page"><span class="card-icon">♙</span><h2>新增客商申请</h2></button>
+          <button class="home-card partner" data-open="partner-page"><span class="card-icon">♙</span><h2>客商申请</h2></button>
         </div>
       </main>
       <nav class="home-footer"><button class="active"><span class="nav-icon">⌂</span>首页</button><button><span class="nav-icon">♙</span>我的</button></nav>
@@ -150,6 +183,7 @@
 
     <section class="page form-page" id="partner-page">
       <header class="mp-header"><button class="back" data-back="home-page" aria-label="返回">‹</button><div class="mp-title">新增客商申请</div><div class="mp-actions"><div class="mini-menu"><span>•••</span><span class="divide"></span><span>◉</span></div></div></header>
+      <nav class="preview-tabs" aria-label="原型页面切换"><button type="button" class="active" data-view="application">客商申请</button><button type="button" data-view="approval">审批页</button></nav>
       <main class="form-scroll"><form class="form-card" id="partner-form" novalidate>
         <h1 class="section-title">基础信息</h1>
         <div class="field" id="partner-type-picker" data-picker-group="partner-type" data-required-group>
@@ -197,7 +231,18 @@
         <div class="upload-row supplier-only" hidden><label class="required">供应商档案</label><button type="button" class="upload-btn">上传</button></div>
         <div class="field"><label for="application-content">申请内容</label><textarea id="application-content" name="applicationContent" maxlength="500" placeholder="请输入申请内容"></textarea><div class="counter" id="content-counter">0/500</div></div>
       </form></main>
-      <footer class="form-footer"><button type="submit" form="partner-form" class="submit-btn">提交</button></footer>
+      <footer class="form-footer"><button type="button" class="preview-btn" id="preview-current">预览审批页</button><button type="submit" form="partner-form" class="submit-btn">提交</button></footer>
+    </section>
+
+    <section class="page approval-page" id="approval-page">
+      <header class="mp-header"><button class="back" data-back="home-page" aria-label="返回">‹</button><div class="mp-title">审批详情</div><div class="mp-actions"><div class="mini-menu"><span>•••</span><span class="divide"></span><span>◉</span></div></div></header>
+      <nav class="preview-tabs" aria-label="原型页面切换"><button type="button" data-view="application">客商申请</button><button type="button" class="active" data-view="approval">审批页</button></nav>
+      <main class="approval-body">
+        <div class="approval-types" role="group" aria-label="审批展示类型"><button type="button" data-approval-type="customer">客户申请</button><button type="button" data-approval-type="supplier">供应商申请</button><button type="button" class="active" data-approval-type="both">客户＋供应商</button></div>
+        <div class="approval-toolbar"><span id="approval-context">示例审批 · 查看字段展示</span><select id="approval-source" aria-label="示例申请来源"><option>沃行</option><option>小程序</option></select></div>
+        <div id="approval-content"></div>
+      </main>
+      <footer class="approval-foot"><button type="button" id="approval-discuss">◯ 发起讨论</button></footer>
     </section>
   </div>
   <div class="toast" id="toast" role="status"></div>
@@ -224,6 +269,99 @@
       let contactId = 0;
       let activePicker = null;
       let draftInputs = [];
+      let lastApplicationPage = 'home-page';
+      let approvalMode = 'sample';
+      let approvalType = 'both';
+      let currentApproval = null;
+      const approvalFields = [
+        ['region', '国内/境外', 'all'], ['chineseName', '中文名称', 'all'],
+        ['shortName', '简称', 'all'], ['englishName', '英文名称', 'all'],
+        ['overseasWarehouse', '含海外仓', 'customer'], ['isPeer', '是否同行', 'all'],
+        ['customerLevel', '客户级别', 'customer'], ['address', '地址', 'all'],
+        ['tradeType', '贸易类型', 'customer'], ['paymentTerm', '账期', 'customer'],
+        ['creditLimit', '额度', 'customer'], ['contractStatus', '签订合同', 'all'],
+        ['contractDeadline', '最迟签订合同日期', 'unsigned'], ['partnerRole', '角色', 'all'],
+        ['businessType', '相关业务类型', 'all']
+      ];
+      const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
+      function approvalRow(label, value) {
+        const text = Array.isArray(value) ? value.join('、') : value;
+        return '<div class="approval-row" data-field="' + escapeHtml(label) + '"><div class="approval-label">' + escapeHtml(label) + '</div><div class="approval-value">' + escapeHtml(text === '' || text == null ? '未填写' : text) + '</div></div>';
+      }
+      function approvalCard(title, body) { return '<section class="approval-card"><h2>' + title + '</h2>' + body + '</section>'; }
+      function makeExample(type) {
+        const customer = type !== 'supplier';
+        const supplier = type !== 'customer';
+        return {
+          partnerType: customer ? (supplier ? ['客户', '供应商'] : ['客户']) : ['供应商'],
+          region: '国内', chineseName: '示例贸易有限公司', shortName: '示例贸易', englishName: 'EXAMPLE TRADING CO., LTD.',
+          overseasWarehouse: '是', isPeer: '是', customerLevel: 'S类', address: '杭州市拱墅区',
+          tradeType: '海运出口/海运进口/FBA', paymentTerm: '票结', creditLimit: '1000',
+          contractStatus: customer ? '未签订' : '已签订', contractDeadline: '2026-12-31',
+          partnerRole: customer ? (supplier ? ['客户', '船代'] : ['客户']) : ['船代'],
+          businessType: customer ? ['海运出口', '综合物流'] : ['海运出口'],
+          contacts: [{ contactName: '示例联系人', contactPartnerType: customer ? (supplier ? ['客户', '供应商'] : ['客户']) : ['供应商'], contactPhone: '13800000000', contactEmail: 'example@example.com' }],
+          services: customer ? [{ '岗位类型': '销售', '业务类型': '海运出口', '用户': '王江哲', '是否默认': '是', '备注': '示例服务人员' }] : [],
+          applicationContent: '新增合作业务，申请建立客商档案。',
+          source: document.getElementById('approval-source').value, applicant: '赵浩杰', department: '开发组',
+          applicationNo: 'KS-DEMO-001', approvalNo: type === 'supplier' ? '202611200086' : '202611200087',
+          submittedAt: '2026/11/20 16:18', status: '已通过',
+          supplement: { '负责销售人员': '王江哲', '是否属于DDP': '否', '是否可签订合同': '是' }, example: true
+        };
+      }
+      function captureApplication() {
+        const result = {};
+        approvalFields.forEach(([name]) => { result[name] = form.querySelector('[name="' + name + '"]')?.value || ''; });
+        result.partnerType = selectedPartnerTypes();
+        result.partnerRole = selectedValues(form.querySelector('[data-picker-group="partner-role"]'));
+        result.businessType = selectedValues(form.querySelector('[data-picker-group="partner-business"]'));
+        result.contacts = [...contactList.querySelectorAll('.contact-row')].map(row => ({
+          contactName: row.querySelector('[name="contactName"]').value,
+          contactPartnerType: selectedValues(row.querySelector('[data-picker-group]')),
+          contactPhone: row.querySelector('[name="contactPhone"]').value,
+          contactEmail: row.querySelector('[name="contactEmail"]').value
+        }));
+        return Object.assign(result, { applicationContent: applicationContent.value, services: [], source: '小程序', applicant: '当前申请人', department: '未提供', applicationNo: '提交后生成', approvalNo: '提交后生成', submittedAt: '提交后记录', status: '待提交', supplement: {}, example: false });
+      }
+      function renderApproval() {
+        const data = approvalMode === 'sample' ? makeExample(approvalType) : currentApproval;
+        if (!data) return;
+        const hasCustomer = data.partnerType.includes('客户');
+        const hasSupplier = data.partnerType.includes('供应商');
+        const type = hasCustomer ? (hasSupplier ? 'both' : 'customer') : 'supplier';
+        const titleType = type === 'both' ? '客商申请（客户＋供应商）' : type === 'customer' ? '客户申请' : '供应商申请';
+        document.querySelectorAll('[data-approval-type]').forEach(button => {
+          const active = button.dataset.approvalType === type;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        document.getElementById('approval-context').textContent = data.example ? '示例审批 · 查看字段展示' : '当前申请预览 · 内容随申请表同步';
+        document.getElementById('approval-source').hidden = !data.example;
+        const hero = '<section class="approval-card approval-hero"><div class="approval-avatar">♙</div><div class="approval-heading"><h1>' + escapeHtml(data.applicant + '的' + titleType + '（' + data.source + '）') + '</h1><span class="approval-status' + (data.status === '已通过' ? '' : ' pending') + '" aria-label="审批状态">' + escapeHtml(data.status) + '</span></div></section>';
+        const metadata = [['申请编号', data.applicationNo], ['审批编号', data.approvalNo], ['提交时间', data.submittedAt], ['申请人', data.applicant], ['所在部门', data.department], ['来源', data.source]];
+        let basic = approvalRow('客商类型', data.partnerType);
+        approvalFields.forEach(([name, label, scope]) => {
+          if (scope === 'customer' && !hasCustomer) return;
+          if (scope === 'unsigned' && data.contractStatus !== '未签订') return;
+          basic += approvalRow(label, data[name]);
+        });
+        const contacts = data.contacts.map((contact, index) => '<div class="approval-contact"><h3>联系人 ' + (index + 1) + '</h3>' + approvalRow('联系人', contact.contactName) + approvalRow('客商类型', contact.contactPartnerType) + approvalRow('联系电话', contact.contactPhone) + approvalRow('联系邮箱', contact.contactEmail) + '</div>').join('');
+        let service = '';
+        if (hasCustomer) service = approvalCard('服务客商人员', data.services.length ? data.services.map(record => '<div class="approval-contact">' + Object.entries(record).map(([label, value]) => approvalRow(label, value)).join('') + '</div>').join('') : ['岗位类型', '业务类型', '用户', '是否默认', '备注'].map(label => approvalRow(label, '')).join(''));
+        const attachmentLabels = [...(hasCustomer ? ['信控额度自测表', '客户档案', '客户托书'] : []), ...(hasSupplier ? ['供应商档案'] : [])];
+        const files = attachmentLabels.map(label => '<div class="approval-row" data-field="' + label + '"><div class="approval-label">' + label + '</div><div class="approval-value">' + (data.example ? '<button type="button" class="approval-file" data-preview-attachment>▧ ' + label + '_示例.pdf</button>' : '未上传') + '</div></div>').join('');
+        const supplement = hasCustomer ? approvalCard('补充信息', ['负责销售人员', '是否属于DDP', '是否可签订合同'].map(label => approvalRow(label, data.supplement[label] || '未提供')).join('')) : '';
+        const nodeState = data.status === '已通过' ? '已同意' : '待审批';
+        const nodeDetails = approvalRow('审批节点', '沿用现有企微配置') + approvalRow('审批人', '按实际节点配置') + approvalRow('节点状态', nodeState) + approvalRow('审批意见', '未提供') + approvalRow('处理时间', '未提供');
+        const timeline = approvalCard('审批流程', '<div class="approval-timeline"><div class="approval-node"><strong>申请人 · ' + (data.status === '待提交' ? '待提交' : '已提交') + '</strong><p>' + escapeHtml(data.applicant) + '</p></div><div class="approval-node"><strong>审批人 · ' + nodeState + (data.example ? '（或签示例）' : '') + '</strong>' + nodeDetails + '<p>审批节点、审批人及或签规则沿用现有企微配置</p></div></div>');
+        document.getElementById('approval-content').innerHTML = hero + approvalCard('申请信息', metadata.map(([label, value]) => approvalRow(label, value)).join('')) + approvalCard('基础信息', basic) + approvalCard('客商联系人信息', contacts) + service + approvalCard('申请资料', files + approvalRow('申请内容', data.applicationContent)) + supplement + timeline;
+      }
+      function previewApplication() {
+        currentApproval = captureApplication();
+        approvalMode = 'current';
+        renderApproval();
+        showPage('approval-page');
+      }
 
       function showToast(message) {
         toast.textContent = message;
@@ -318,6 +456,7 @@
         if (sourceRow) row.querySelector('[name="contactName"]').focus();
       }
       function showPage(pageId) {
+        if (pageId !== 'approval-page') lastApplicationPage = pageId;
         document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === pageId));
         window.scrollTo({ top: 0, behavior: 'instant' });
       }
@@ -399,6 +538,18 @@
       }
       document.querySelectorAll('[data-open]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.open)));
       document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.back)));
+      document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
+        if (button.dataset.view === 'application') { showPage(lastApplicationPage); return; }
+        if (document.getElementById('partner-page').classList.contains('active')) previewApplication();
+        else { renderApproval(); showPage('approval-page'); }
+      }));
+      document.querySelectorAll('[data-approval-type]').forEach(button => button.addEventListener('click', () => {
+        approvalMode = 'sample'; approvalType = button.dataset.approvalType; renderApproval();
+      }));
+      document.getElementById('approval-source').addEventListener('change', renderApproval);
+      document.getElementById('preview-current').addEventListener('click', previewApplication);
+      document.getElementById('approval-discuss').addEventListener('click', () => showToast('讨论请在企微审批单中发起'));
+      document.getElementById('approval-content').addEventListener('click', event => { if (event.target.closest('[data-preview-attachment]')) showToast('示例附件，实际文件以审批单据为准'); });
       form.addEventListener('click', event => {
         const trigger = event.target.closest('.multi-picker-trigger');
         if (trigger) openPicker(trigger.closest('[data-picker-group]'));
